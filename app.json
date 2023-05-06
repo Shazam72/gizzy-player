@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "gizzy-player",
+    "scheme": "gizzy-player",
     "slug": "gizzy-player",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,10 +22,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jfrancois72.gizzyplayer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "19142fbb-cdc5-470e-a4e2-e03a8a7318b4"
+      }
+    },
+    "owner": "jfrancois72"
   }
 }
