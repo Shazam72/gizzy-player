@@ -16,17 +16,18 @@ import color from "../configs/color";
 
 export default function OptionModal({ visible, onClose, item }) {
   return (
-    <Modal transparent animationType="slide" visible={visible}>
+    <Modal transparent animationType="slide" useNativeDriver={true} visible={visible}>
       <View style={styles.container}>
         <View style={styles.modalHead}>
           <Text style={styles.modalHeadTitle}>Option de la musique</Text>
         </View>
         <View style={styles.audioInfo}>
           <Text style={styles.audioTitle} numOfLines={1}>
-            {item.filename}
+            {item?.filename}
           </Text>
-          <Text style={styles.audioSubTitle}>{item.duration}</Text>
+          <Text style={styles.audioSubTitle}>{item?.duration}</Text>
         </View>
+        
         <View style={styles.optionsContainer}>
           <TouchableOpacity style={styles.optionItemContainer}>
             <MaterialCommunityIcons
