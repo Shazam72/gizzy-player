@@ -1,11 +1,12 @@
 import { StyleSheet, View, FlatList } from "react-native";
 import { useState, useCallback, useContext } from "react";
-import MediaContext, {
+import {
   pauseAudio,
   playAnotherAudio,
   playAudio,
   resumeAudio,
-} from "../contexts/media";
+} from "../utils/audio-control";
+import MediaContext from "../contexts/media";
 import AudioItem from "../components/AudioItem";
 import OptionModal from "../components/OptionModal";
 import { useSharedValue } from "react-native-reanimated";
@@ -42,11 +43,11 @@ const styles = StyleSheet.create({
 });
 
 const ITEM_HEIGHT = 65;
-const getItemLayout = (data, numberOfElements) => {
+const getItemLayout = (data, index) => {
   return {
     length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * numberOfElements,
-    numberOfElements,
+    offset: ITEM_HEIGHT * index,
+    index,
   };
 };
 
@@ -73,7 +74,7 @@ const getIcon = (isCurrent, isPlaying) => {
 };
 
 export default function index() {
-  let { audioList, updatePlayerInfo, playerInfo } = useContext(MediaContext);
+  let { updatePlayerInfo, playerInfo } = useContext(MediaContext);
   const [modal, setModal] = useState({
     item: {},
     visible: false,
@@ -137,11 +138,12 @@ export default function index() {
     <>
       <FlatList
         style={styles.listContainer}
-        data={audioList}
+        data={playerInfo.audioList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         contentContainerStyle={{ gap: 10 }}
         onViewableItemsChanged={onViewableItemsChanged}
+        // getItemLayout={getItemLayout}
       />
       <OptionModal onClose={onCloseModal} {...modal} />
     </>

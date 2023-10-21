@@ -27,39 +27,18 @@ const exludeAudioFromDirectories = (
   return filteredList;
 };
 
-export const playAudio = async (playerObj, uri) => {
-  return await playerObj.loadAsync({ uri }, { shouldPlay: true });
-};
-export const playAnotherAudio = async (playerObj, uri) => {
-  await playerObj.stopAsync();
-  await playerObj.unloadAsync();
-  return await playAudio(playerObj, uri);
-};
-export const pauseAudio = async (playerObj) => {
-  return await playerObj.setStatusAsync({ shouldPlay: false });
-};
-export const resumeAudio = async (playerObj) => {
-  return await playerObj.playAsync();
-};
-
 export const MediaContextProvider = ({ children }) => {
-  const [mediaInfo, setMediaInfo] = useState({
-    audioList: [],
-    granted: false,
-  });
   const [playerInfo, setPlayerInfo] = useState({
     currentAudio: null,
     playerStatus: null,
     playerObj: new Audio.Sound(),
     currentAudioIndex: null,
+    totalCount: null,
+    audioList: [],
+    granted: false,
   });
 
-  const filteredAudioList = useMemo(() => {
-    let list = exludeAudioFromDirectories(mediaInfo.audioList);
-    return list;
-  }, [mediaInfo.audioList]);
-
-  const getAudioFiles = useCallback(async () => {
+  const getAudioFiles = async () => {
     let list = await MediaLibrary.getAssetsAsync({
       mediaType: "audio",
     });
@@ -67,12 +46,15 @@ export const MediaContextProvider = ({ children }) => {
       mediaType: "audio",
       first: list.totalCount,
     });
-    setMediaInfo((v) => ({
+
+    setPlayerInfo((v) => ({
       ...v,
       granted: true,
-      audioList: [...list.assets],
+      totalCount: list.totalCount,
+      audioList: exludeAudioFromDirectories(list.assets),
     }));
-  }, []);
+  };
+
   const askPermission = useCallback(async () => {
     let { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
 
@@ -81,7 +63,7 @@ export const MediaContextProvider = ({ children }) => {
       return;
     }
     if (status === "denied" && !canAskAgain) {
-      setMediaInfo({ granted: false });
+      setPlayerInfo((v) => ({ ...v, granted: false }));
       return;
     }
     if (status === "granted") getAudioFiles();
@@ -92,14 +74,13 @@ export const MediaContextProvider = ({ children }) => {
       askPermission();
     }
     if (!permissionStatus.granted && !permissionStatus.canAskAgain) {
-      setMediaInfo({ granted: false });
-
+      setPlayerInfo((v) => ({ ...v, granted: false }));
       return;
     }
     if (permissionStatus.granted) {
       getAudioFiles();
     }
-  },[]);
+  }, []);
 
   const updatePlayerInfo = (newState) => {
     setPlayerInfo((v) => ({
@@ -114,9 +95,9 @@ export const MediaContextProvider = ({ children }) => {
   return (
     <MediaContext.Provider
       value={{
-        audioList: filteredAudioList,
         updatePlayerInfo,
         playerInfo,
+        getAudioFiles,
       }}
     >
       {children}
