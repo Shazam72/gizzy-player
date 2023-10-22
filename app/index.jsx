@@ -17,6 +17,7 @@ import {
   FontAwesome5,
 } from "@expo/vector-icons";
 import color from "../configs/color";
+import { useRouter, useNavigation, useRootNavigation } from "expo-router";
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -80,16 +81,20 @@ export default function index() {
     visible: false,
   });
   const viItems = useSharedValue([]);
+  const navigation = useNavigation();
 
   const onAudioItemPress = async (audioItem, index) => {
     const { currentAudio, playerStatus, playerObj } = playerInfo;
+
     if (playerStatus === null) {
       const status = await playAudio(playerObj, audioItem.uri);
-      return updatePlayerInfo({
+
+      updatePlayerInfo({
         currentAudio: audioItem,
         playerStatus: status,
         currentAudioIndex: index,
       });
+      return navigation.navigate("player");
     }
     if (currentAudio.id === audioItem.id) {
       let status = null;
@@ -102,11 +107,12 @@ export default function index() {
       return updatePlayerInfo({ playerStatus: status });
     } else {
       let status = await playAnotherAudio(playerObj, audioItem.uri);
-      return updatePlayerInfo({
+      updatePlayerInfo({
         currentAudio: audioItem,
         playerStatus: status,
         currentAudioIndex: index,
       });
+      return navigation.navigate("player");
     }
   };
 

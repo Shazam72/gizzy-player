@@ -42,6 +42,7 @@ export default function AppLayout() {
           name="player"
           options={{
             title: "Écouter",
+            // href: "/player",
             ...options,
             tabBarIcon: ({ focused }) => (
               <Ionicons
@@ -50,7 +51,6 @@ export default function AppLayout() {
                 color={focused ? colors.primary : "black"}
               />
             ),
-            headerShown: false,
           }}
         />
         <Tabs.Screen
