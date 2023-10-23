@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useContext } from "react";
-import MediaContext from "../../contexts/media";
+import PlayerContext from "../../contexts/player";
 
 export default function Title() {
-  const { playerInfo } = useContext(MediaContext);
+  const { playerInfo } = useContext(PlayerContext);
   return (
     <View style={styles.wrapper}>
       <Text style={styles.title}>{playerInfo.currentAudio?.filename ?? "Titre non defini un bon son aj sjsjjsjjs jsjjdjdjdjdjd djdjjddjjd"}</Text>

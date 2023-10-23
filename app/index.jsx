@@ -1,15 +1,6 @@
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Dimensions, Text } from "react-native";
 import { useState, useCallback, useContext } from "react";
-import {
-  pauseAudio,
-  playAnotherAudio,
-  playAudio,
-  resumeAudio,
-} from "../utils/audio-control";
 import MediaContext from "../contexts/media";
-import AudioItem from "../components/AudioItem";
-import OptionModal from "../components/OptionModal";
-import { useSharedValue } from "react-native-reanimated";
 import {
   Entypo,
   SimpleLineIcons,
@@ -17,7 +8,8 @@ import {
   FontAwesome5,
 } from "@expo/vector-icons";
 import color from "../configs/color";
-import { useRouter, useNavigation, useRootNavigation } from "expo-router";
+import AudioListItem from "../components/AudioListItem";
+("recyclerlistview");
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -43,123 +35,58 @@ const styles = StyleSheet.create({
   },
 });
 
-const ITEM_HEIGHT = 65;
-const getItemLayout = (data, index) => {
-  return {
-    length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * index,
-    index,
-  };
-};
+// const ITEM_HEIGHT = 65;
+// const getItemLayout = (data, index) => {
+//   return {
+//     length: ITEM_HEIGHT,
+//     offset: ITEM_HEIGHT * index,
+//     index,
+//   };
+// };
 
-const getIcon = (isCurrent, isPlaying) => {
-  if (isCurrent) {
-    if (isPlaying)
-      return (
-        <View style={[styles.iconContainer]}>
-          <FontAwesome5 name="play" size={30} color="white" />
-        </View>
-      );
-    else
-      return (
-        <View style={[styles.iconContainer]}>
-          <AntDesign name="pause" size={40} color="white" />
-        </View>
-      );
-  } else
-    return (
-      <View style={[styles.iconContainer, styles.normalIcon]}>
-        <SimpleLineIcons name="music-tone" size={30} color={color.primary} />
-      </View>
-    );
-};
+// const getIcon = (isCurrent, isPlaying) => {
+//   if (isCurrent) {
+//     if (isPlaying)
+//       return (
+//         <View style={[styles.iconContainer]}>
+//           <FontAwesome5 name="play" size={30} color="white" />
+//         </View>
+//       );
+//     else
+//       return (
+//         <View style={[styles.iconContainer]}>
+//           <AntDesign name="pause" size={40} color="white" />
+//         </View>
+//       );
+//   } else
+//     return (
+//       <View style={[styles.iconContainer, styles.normalIcon]}>
+//         <SimpleLineIcons name="music-tone" size={30} color={color.primary} />
+//       </View>
+//     );
+// };
 
 export default function index() {
-  let { updatePlayerInfo, playerInfo } = useContext(MediaContext);
-  const [modal, setModal] = useState({
-    item: {},
-    visible: false,
-  });
-  const viItems = useSharedValue([]);
-  const navigation = useNavigation();
+  let { mediaInfo } = useContext(MediaContext);
 
-  const onAudioItemPress = async (audioItem, index) => {
-    const { currentAudio, playerStatus, playerObj } = playerInfo;
-
-    if (playerStatus === null) {
-      const status = await playAudio(playerObj, audioItem.uri);
-
-      updatePlayerInfo({
-        currentAudio: audioItem,
-        playerStatus: status,
-        currentAudioIndex: index,
-      });
-      return navigation.navigate("player");
-    }
-    if (currentAudio.id === audioItem.id) {
-      let status = null;
-      if (!playerStatus.isPlaying && playerStatus.isLoaded)
-        status = await resumeAudio(playerObj);
-
-      if (playerStatus.isPlaying && playerStatus.isLoaded)
-        status = await pauseAudio(playerObj);
-
-      return updatePlayerInfo({ playerStatus: status });
-    } else {
-      let status = await playAnotherAudio(playerObj, audioItem.uri);
-      updatePlayerInfo({
-        currentAudio: audioItem,
-        playerStatus: status,
-        currentAudioIndex: index,
-      });
-      return navigation.navigate("player");
-    }
-  };
-
-  const keyExtractor = useCallback((item) => item.id, []);
-
-  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-    viItems.value = viewableItems;
-  }, []);
-
-  const renderItem = useCallback(
-    (props) => {
-      let isCurrent = playerInfo?.currentAudioIndex === props.index;
-      let isPlaying = Boolean(playerInfo?.playerStatus?.isPlaying);
-      return (
-        <AudioItem
-          viewableItems={viItems}
-          onOptionPress={onOptionPress}
-          onAudioItemPress={onAudioItemPress}
-          isPlaying={isPlaying}
-          icon={getIcon(isCurrent, isPlaying)}
-          isCurrent={isCurrent}
-          {...props}
-        />
-      );
-    },
-    [playerInfo.playerStatus, playerInfo.currentAudioIndex]
+  const renderItem = ({ item, index }) => (
+    <AudioListItem item={item} index={index} />
   );
+  const keyExtractor = (item) => item.id;
+
   return (
     <>
       <FlatList
         style={styles.listContainer}
-        data={playerInfo.audioList}
+        data={mediaInfo.audioList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        contentContainerStyle={{ gap: 10 }}
-        onViewableItemsChanged={onViewableItemsChanged}
+        // contentContainerStyle={{ gap: 10 }}
+        // onEndReached={onEndReached}
+        // onEndReachedThreshold={0.6}
         // getItemLayout={getItemLayout}
       />
-      <OptionModal onClose={onCloseModal} {...modal} />
+      {/* <OptionModal onClose={onCloseModal} {...modal} /> */}
     </>
   );
-
-  function onOptionPress(item) {
-    setModal({ visible: true, item });
-  }
-
-  function onCloseModal() {
-    return setModal({ item: {}, visible: false });
-  }
 }

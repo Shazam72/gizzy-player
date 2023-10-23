@@ -1,23 +1,18 @@
 import { useMemo, useContext } from "react";
-import MediaContext from "../contexts/media";
 import {
   pauseAudio,
   playAnotherAudio,
   resumeAudio,
   playAudio,
 } from "../utils/audio-control";
+import PlayerContext from "../contexts/player";
+import MediaContext from "../contexts/media";
 
 export const usePlayerControls = () => {
-  const { playerInfo,updatePlayerInfo } = useContext(MediaContext);
-  const {
-    playerStatus,
-    playerObj,
-    currentAudioIndex,
-    totalCount,
-    audioList,
-    currentAudio,
-    
-  } = playerInfo;
+  const { mediaInfo } = useContext(MediaContext);
+  const { totalCount, audioList } = mediaInfo;
+  const { playerInfo, updatePlayerInfo } = useContext(PlayerContext);
+  const { playerStatus, playerObj, currentAudioIndex } = playerInfo;
 
   const playPause = async () => {
     let status = null;
@@ -29,8 +24,30 @@ export const usePlayerControls = () => {
 
     updatePlayerInfo({ playerStatus: status });
   };
-  const next = async () => {};
-  const prev = async () => {};
+
+  const next = async () => {
+    let newCurrentAudioIndex = currentAudioIndex + 1;
+    if (currentAudioIndex >= totalCount) newCurrentAudioIndex = 0;
+    let newCurrentAudio = audioList[newCurrentAudioIndex];
+    let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
+    updatePlayerInfo({
+      playerStatus: status,
+      currentAudioIndex: newCurrentAudioIndex,
+      currentAudio: newCurrentAudio,
+    });
+  };
+
+  const prev = async () => {
+    let newCurrentAudioIndex = currentAudioIndex - 1;
+    if (currentAudioIndex < 0) newCurrentAudioIndex = totalCount - 1;
+    let newCurrentAudio = audioList[newCurrentAudioIndex];
+    let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
+    updatePlayerInfo({
+      playerStatus: status,
+      currentAudioIndex: newCurrentAudioIndex,
+      currentAudio: newCurrentAudio,
+    });
+  };
 
   return {
     prev,

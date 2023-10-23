@@ -1,87 +1,78 @@
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext, useRef } from "react";
 import * as MediaLibrary from "expo-media-library";
-import { Audio } from "expo-av";
 import { exludeAudioFromDirectories } from "../utils/sort-filters";
 
 const MediaContext = createContext();
 
-const getAudioFiles = async () => {
+const getAudioFiles = async (batch = 0, first = 20) => {
   let list = await MediaLibrary.getAssetsAsync({
     mediaType: "audio",
+    // after: String(batch * first),
+    // first,
   });
   list = await MediaLibrary.getAssetsAsync({
     mediaType: "audio",
     first: list.totalCount,
+    // after: String(batch * first),
+    // first,
   });
 
   return {
-    granted: true,
+    // granted: true,
     totalCount: list.totalCount,
     audioList: exludeAudioFromDirectories(list.assets),
+    // currentBatch: batch + 1,
   };
 };
 
 const askPermission = async () => {
   let { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
 
+  if (status === "granted") return true;
+
   if (status === "denied" && canAskAgain) {
     alert("Vous devez autorizer les permissions");
-    return;
   }
-  if (status === "denied" && !canAskAgain) {
-    return false;
-  }
-  if (status === "granted") getAudioFiles();
+  return false;
 };
 const checkPermissions = async () => {
   const permissionStatus = await MediaLibrary.getPermissionsAsync();
   if (!permissionStatus.granted && permissionStatus.canAskAgain) {
-    askPermission();
+    return await askPermission();
   }
   if (!permissionStatus.granted && !permissionStatus.canAskAgain) {
     return false;
   }
   if (permissionStatus.granted) {
-    return await getAudioFiles();
+    return true;
   }
 };
 
 export const MediaContextProvider = ({ children }) => {
-  const [playerInfo, setPlayerInfo] = useState({
-    currentAudio: null,
-    playerStatus: null,
-    playerObj: new Audio.Sound(),
-    currentAudioIndex: null,
+  const [mediaInfo, setMediaInfo] = useState({
     totalCount: null,
     audioList: [],
-    granted: false,
   });
 
-  console.log("render");
-  const updatePlayerInfo = (newState) => {
-    setPlayerInfo((v) => ({
-      ...v,
-      ...newState,
-    }));
+  const updateMediaInfo = (newMediaInfo) => {
+    setMediaInfo((v) => ({ ...v, ...newMediaInfo }));
   };
+
   useEffect(() => {
-    checkPermissions().then((files) => {
-      if (files) updatePlayerInfo(files);
-    });
-    return async () => {
-      if (playerInfo.playerStatus?.isPlaying) {
-        await playerInfo.playerObj.setStatusAsync({ shouldPlay: false });
+    checkPermissions().then((permission) => {
+      if (permission === true) {
+        getAudioFiles(mediaInfo.currentBatch).then((filesInfo) => {
+          updateMediaInfo({
+            totalCount: filesInfo.totalCount,
+            audioList: filesInfo.audioList,
+          });
+        });
       }
-    };
+    });
+    return () => {};
   }, []);
   return (
-    <MediaContext.Provider
-      value={{
-        updatePlayerInfo,
-        playerInfo,
-        getAudioFiles,
-      }}
-    >
+    <MediaContext.Provider value={{ mediaInfo, updateMediaInfo }}>
       {children}
     </MediaContext.Provider>
   );

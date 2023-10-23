@@ -1,13 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useContext, useMemo, useState, useRef } from "react";
 import { AntDesign } from "@expo/vector-icons";
-import MediaContext from "../../contexts/media";
-import {} from "react/cjs/react.production.min";
 import { usePlayerControls } from "../../hooks/player-controls";
+import PlayerContext from "../../contexts/player";
 
 export default function Controls() {
-  const { playerInfo } = useContext(MediaContext);
-  // const [icon, setIcon] = useState("pausecircle")
+  const { playerInfo } = useContext(PlayerContext);
   const { playPause, next, prev } = usePlayerControls();
 
   const playPauseIcon = useMemo(() => {
@@ -21,7 +19,7 @@ export default function Controls() {
       <AntDesign name="stepbackward" size={35} onPress={prev} />
       <AntDesign name="banckward" size={35} />
       <AntDesign
-      name={playPauseIcon}
+        name={playPauseIcon}
         // name={playerInfo.playerStatus && playerInfo.playerStatus.isPlaying ?  "pausecircle"
         // : "playcircleo"}
         onPress={playPause}

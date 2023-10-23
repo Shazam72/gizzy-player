@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import colors from "../configs/color";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { MediaContextProvider } from "../contexts/media";
+import { PlayerContextProvider } from "../contexts/player";
 
 const options = {
   tabBarLabelStyle: {
@@ -13,61 +14,63 @@ const options = {
 export default function AppLayout() {
   return (
     <MediaContextProvider>
-      <Tabs
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#d4a7d4",
-          },
-          headerTitleStyle: {
-            color: colors.black,
-          },
-          tabBarActiveTintColor: colors.primary,
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Bibliothèque",
-            ...options,
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="my-library-music"
-                size={20}
-                color={focused ? colors.primary : "black"}
-              />
-            ),
+      <PlayerContextProvider>
+        <Tabs
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "#d4a7d4",
+            },
+            headerTitleStyle: {
+              color: colors.black,
+            },
+            tabBarActiveTintColor: colors.primary,
           }}
-        />
-        <Tabs.Screen
-          name="player"
-          options={{
-            title: "Écouter",
-            // href: "/player",
-            ...options,
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="md-headset-sharp"
-                size={20}
-                color={focused ? colors.primary : "black"}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="playlists"
-          options={{
-            title: "Playlists",
-            ...options,
-            tabBarIcon: ({ focused }) => (
-              <MaterialIcons
-                name="my-library-music"
-                size={20}
-                color={focused ? colors.primary : "black"}
-              />
-            ),
-          }}
-        />
-      </Tabs>
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: "Bibliothèque",
+              ...options,
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="my-library-music"
+                  size={20}
+                  color={focused ? colors.primary : "black"}
+                />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="player"
+            options={{
+              title: "Écouter",
+              headerShown: false,
+              ...options,
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name="md-headset-sharp"
+                  size={20}
+                  color={focused ? colors.primary : "black"}
+                />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="playlists"
+            options={{
+              title: "Playlists",
+              ...options,
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="my-library-music"
+                  size={20}
+                  color={focused ? colors.primary : "black"}
+                />
+              ),
+            }}
+          />
+        </Tabs>
+      </PlayerContextProvider>
     </MediaContextProvider>
   );
 }
