@@ -5,7 +5,7 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
 } from "react-native";
-import { useCallback, memo, useContext } from "react";
+import { useCallback, memo, useContext, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import color from "../configs/color";
 import MediaContext from "../contexts/media";
@@ -20,8 +20,16 @@ import PlayerContext from "../contexts/player";
 
 const AudioListItem = memo(({ item, onOptionPress, index }) => {
   // const onAudioOptionPress = () => onOptionPress(item);
-  const { playerInfo, updatePlayerInfo } = useContext(PlayerContext);
+  const { playerInfo, updatePlayerInfo, updatePlaybackStatus, playbackStatus } =
+    useContext(PlayerContext);
   const navigation = useNavigation();
+
+
+  const OnPlaybackStatusUpdate = (newPlaybackStatus) => {
+    if (newPlaybackStatus.isLoaded && newPlaybackStatus.isPlaying) {
+      // updatePlaybackStatus(newPlaybackStatus);
+    }
+  };
 
   const onAudioListItemPress = useCallback(async () => {
     const { currentAudio, playerStatus, playerObj } = playerInfo;
@@ -34,6 +42,7 @@ const AudioListItem = memo(({ item, onOptionPress, index }) => {
         playerStatus: status,
         currentAudioIndex: index,
       });
+      playerObj.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
       return navigation.navigate("player");
     }
     if (currentAudio.id === item.id) {
@@ -54,7 +63,7 @@ const AudioListItem = memo(({ item, onOptionPress, index }) => {
       });
       return navigation.navigate("player");
     }
-  }, []);
+  }, [playerInfo]);
   return (
     <View style={[styles.wrapper]}>
       <TouchableWithoutFeedback onPress={onAudioListItemPress}>

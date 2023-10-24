@@ -27,7 +27,7 @@ export const usePlayerControls = () => {
 
   const next = async () => {
     let newCurrentAudioIndex = currentAudioIndex + 1;
-    if (currentAudioIndex >= totalCount) newCurrentAudioIndex = 0;
+    if (newCurrentAudioIndex >= totalCount) newCurrentAudioIndex = 0;
     let newCurrentAudio = audioList[newCurrentAudioIndex];
     let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
     updatePlayerInfo({
@@ -39,7 +39,7 @@ export const usePlayerControls = () => {
 
   const prev = async () => {
     let newCurrentAudioIndex = currentAudioIndex - 1;
-    if (currentAudioIndex < 0) newCurrentAudioIndex = totalCount - 1;
+    if (newCurrentAudioIndex < 0) newCurrentAudioIndex = totalCount - 1;
     let newCurrentAudio = audioList[newCurrentAudioIndex];
     let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
     updatePlayerInfo({

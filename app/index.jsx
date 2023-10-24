@@ -1,5 +1,5 @@
-import { StyleSheet, View, FlatList, Dimensions, Text } from "react-native";
-import { useState, useCallback, useContext } from "react";
+import { StyleSheet, View, FlatList, Dimensions, Animated } from "react-native";
+import { useState, useCallback, useContext, useRef } from "react";
 import MediaContext from "../contexts/media";
 import {
   Entypo,
@@ -9,7 +9,6 @@ import {
 } from "@expo/vector-icons";
 import color from "../configs/color";
 import AudioListItem from "../components/AudioListItem";
-("recyclerlistview");
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -35,14 +34,14 @@ const styles = StyleSheet.create({
   },
 });
 
-// const ITEM_HEIGHT = 65;
-// const getItemLayout = (data, index) => {
-//   return {
-//     length: ITEM_HEIGHT,
-//     offset: ITEM_HEIGHT * index,
-//     index,
-//   };
-// };
+const ITEM_HEIGHT = 65;
+const getItemLayout = (data, index) => {
+  return {
+    length: ITEM_HEIGHT,
+    offset: ITEM_HEIGHT * index,
+    index,
+  };
+};
 
 // const getIcon = (isCurrent, isPlaying) => {
 //   if (isCurrent) {
@@ -74,19 +73,16 @@ export default function index() {
   );
   const keyExtractor = (item) => item.id;
 
+
   return (
-    <>
-      <FlatList
-        style={styles.listContainer}
-        data={mediaInfo.audioList}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        // contentContainerStyle={{ gap: 10 }}
-        // onEndReached={onEndReached}
-        // onEndReachedThreshold={0.6}
-        // getItemLayout={getItemLayout}
-      />
-      {/* <OptionModal onClose={onCloseModal} {...modal} /> */}
-    </>
+    <FlatList
+      style={styles.listContainer}
+      data={mediaInfo.audioList}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      contentContainerStyle={{ gap: 10 }}
+      getItemLayout={getItemLayout}
+    />
+    // {/* <OptionModal onClose={onCloseModal} {...modal} /> */}
   );
 }

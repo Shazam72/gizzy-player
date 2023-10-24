@@ -63,7 +63,7 @@ export const MediaContextProvider = ({ children }) => {
       if (permission === true) {
         getAudioFiles(mediaInfo.currentBatch).then((filesInfo) => {
           updateMediaInfo({
-            totalCount: filesInfo.totalCount,
+            totalCount: filesInfo.audioList.length,
             audioList: filesInfo.audioList,
           });
         });
