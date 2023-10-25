@@ -1,23 +1,23 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useContext } from "react";
-import PlayerContext from "../../contexts/player";
+import React, { memo } from "react";
 
-export default function Title() {
-  const { playerInfo } = useContext(PlayerContext);
+export default Title = memo(({ children }) => {
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.title}>{playerInfo.currentAudio?.filename ?? "Titre non defini un bon son aj sjsjjsjjs jsjjdjdjdjdjd djdjjddjjd"}</Text>
+      <Text style={styles.title}>
+        {children}
+      </Text>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingVertical:5,
+    paddingVertical: 5,
   },
-  title:{
-    fontSize:20,
-    fontWeight:"bold",
-    textAlign:"center"
-  }
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
