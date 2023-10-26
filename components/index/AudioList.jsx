@@ -1,7 +1,12 @@
 import { FlatList, StyleSheet, Text, Dimensions, View } from "react-native";
 import React, { useCallback, useContext } from "react";
 import AudioListItem from "./AudioListItem";
-import { playAnotherAudio, playAudio } from "../../utils/audio-control";
+import {
+  pauseAudio,
+  playAnotherAudio,
+  playAudio,
+  resumeAudio,
+} from "../../utils/audio-control";
 import { useNavigation } from "expo-router";
 import MediaContext, { useMediaContext } from "../../contexts/media";
 import PlayerContext from "../../contexts/player";
@@ -28,16 +33,17 @@ export default function AudioList({ list }) {
     if (newPlaybackStatus.isLoaded && newPlaybackStatus.isPlaying) {
       updatePlaybackStatus(newPlaybackStatus);
     }
-
     if (newPlaybackStatus.didJustFinish) {
-      let currentAudioURI = "file://" + newPlaybackStatus.uri;
-      let newCurrentAudioIndex = getAudioIndexByURI(currentAudioURI);
+      let newCurrentAudioIndex = getAudioIndexByURI(
+        newPlaybackStatus.uri,
+        true
+      );
 
       if (newCurrentAudioIndex == -1) {
-        console.error("Audio index for", currentAudioURI, "not found");
+        console.error("Audio index for", newPlaybackStatus.uri, "not found");
         return;
       }
-
+      newCurrentAudioIndex++
       if (newCurrentAudioIndex >= mediaInfo.totalCount)
         newCurrentAudioIndex = 0;
       let newCurrentAudio = mediaInfo.audioList[newCurrentAudioIndex];
@@ -48,22 +54,39 @@ export default function AudioList({ list }) {
         currentAudio: newCurrentAudio,
       });
     }
-  }, []);
+  }, [mediaInfo.audioList]);
   const onAudioListItemPress = useCallback(
     async (item, index) => {
-      if (playerStatus === null) {
-        const status = await playAudio(playerObj, item.uri);
+      let currentStatus = await playerObj.getStatusAsync();
+      let status = null;
+      if (!currentStatus.isLoaded) {
+        status = await playAudio(playerObj, item.uri);
 
         updatePlayerInfo({
           currentAudio: item,
           playerStatus: status,
           currentAudioIndex: index,
         });
-        playerObj.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
+        playerObj.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
         return navigation.navigate("player");
       }
 
-      let status = await playAnotherAudio(playerObj, item.uri);
+      let currentAudioIndex = getAudioIndexByURI(currentStatus.uri, true);
+      if (currentAudioIndex == -1) {
+        console.error("Audio index for", currentStatus.uri, "not found");
+        return;
+      }
+
+      if (currentAudioIndex == index) {
+        if (currentStatus.isPlaying) status = await pauseAudio(playerObj);
+        else status = await resumeAudio(playerObj);
+
+        return updatePlayerInfo({
+          playerStatus: status,
+        });
+      }
+
+      status = await playAnotherAudio(playerObj, item.uri);
       updatePlayerInfo({
         currentAudio: item,
         currentAudioIndex: index,
@@ -71,7 +94,7 @@ export default function AudioList({ list }) {
       });
       return navigation.navigate("player");
     },
-    [currentAudioIndex, onPlaybackStatusUpdate]
+    [onPlaybackStatusUpdate, getAudioIndexByURI]
   );
 
   const renderItem = useCallback(

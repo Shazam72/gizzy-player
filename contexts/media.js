@@ -88,8 +88,14 @@ export const useMediaContext = () => {
   const mediaCtx = useContext(MediaContext);
 
   const getAudioIndexByURI = useCallback(
-    (uri, list = mediaCtx.mediaInfo.audioList) => {
-      return list.findIndex((audio) => audio.uri == uri);
+    (
+      uri,
+      autoCompletefilePrefix = false,
+      list = mediaCtx.mediaInfo.audioList
+    ) => {
+      let fullURI = uri;
+      if (autoCompletefilePrefix) fullURI = "file://" + fullURI;
+      return list.findIndex((audio) => audio.uri == fullURI);
     },
     [mediaCtx.mediaInfo.audioList]
   );

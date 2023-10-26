@@ -27,10 +27,8 @@ export const usePlayerControls = () => {
 
   const next = async () => {
     let newCurrentAudioIndex = currentAudioIndex + 1;
-    console.log("Avant ",newCurrentAudioIndex, currentAudioIndex);
     if (newCurrentAudioIndex >= totalCount) newCurrentAudioIndex = 0;
     let newCurrentAudio = audioList[newCurrentAudioIndex];
-    console.log("Apres ",newCurrentAudioIndex);
     let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
     updatePlayerInfo({
       playerStatus: status,
