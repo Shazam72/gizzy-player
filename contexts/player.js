@@ -1,5 +1,5 @@
 import { Audio } from "expo-av";
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 const PlayerContext = createContext({});
 
@@ -11,11 +11,11 @@ export const PlayerContextProvider = ({ children }) => {
     currentAudioIndex: null,
   });
   const [playbackStatus, setPlaybackStatus] = useState({});
-  
 
   const updatePlaybackStatus = (newState) => {
     setPlaybackStatus((v) => ({ ...v, ...newState }));
   };
+
   const updatePlayerInfo = (newState) => {
     setPlayerInfo((v) => ({ ...v, ...newState }));
   };
@@ -26,12 +26,18 @@ export const PlayerContextProvider = ({ children }) => {
         playerInfo,
         playbackStatus,
         updatePlayerInfo,
-        updatePlaybackStatus
+        updatePlaybackStatus,
       }}
     >
       {children}
     </PlayerContext.Provider>
   );
+};
+
+export const usePlayerInfo = () => {
+  const playerCtx = useContext(PlayerContext);
+
+  return playerCtx;
 };
 
 export default PlayerContext;

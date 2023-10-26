@@ -1,6 +1,14 @@
-import { useState, useEffect, createContext, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  createContext,
+  useRef,
+  useContext,
+  useCallback,
+} from "react";
 import * as MediaLibrary from "expo-media-library";
 import { exludeAudioFromDirectories } from "../utils/sort-filters";
+import { Text } from "react-native";
 
 const MediaContext = createContext();
 
@@ -18,13 +26,11 @@ const getAudioFiles = async (batch = 0, first = 20) => {
   });
 
   return {
-    // granted: true,
     totalCount: list.totalCount,
     audioList: exludeAudioFromDirectories(list.assets),
     // currentBatch: batch + 1,
   };
 };
-
 const askPermission = async () => {
   let { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
 
@@ -76,6 +82,19 @@ export const MediaContextProvider = ({ children }) => {
       {children}
     </MediaContext.Provider>
   );
+};
+
+export const useMediaContext = () => {
+  const mediaCtx = useContext(MediaContext);
+
+  const getAudioIndexByURI = useCallback(
+    (uri, list = mediaCtx.mediaInfo.audioList) => {
+      return list.findIndex((audio) => audio.uri == uri);
+    },
+    [mediaCtx.mediaInfo.audioList]
+  );
+
+  return { ...mediaCtx, getAudioIndexByURI };
 };
 
 export default MediaContext;
