@@ -10,12 +10,6 @@ export const PlayerContextProvider = ({ children }) => {
     currentAudio: null,
     currentAudioIndex: null,
   });
-  const [playbackStatus, setPlaybackStatus] = useState({});
-
-  const updatePlaybackStatus = (newState) => {
-    setPlaybackStatus((v) => ({ ...v, ...newState }));
-  };
-
   const updatePlayerInfo = (newState) => {
     setPlayerInfo((v) => ({ ...v, ...newState }));
   };
@@ -24,9 +18,7 @@ export const PlayerContextProvider = ({ children }) => {
     <PlayerContext.Provider
       value={{
         playerInfo,
-        playbackStatus,
         updatePlayerInfo,
-        updatePlaybackStatus,
       }}
     >
       {children}

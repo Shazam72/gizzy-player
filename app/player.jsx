@@ -20,7 +20,7 @@ export default function Player() {
       <Viewer />
       <Title>
         {playerInfo?.currentAudio?.filename ??
-          "Titre non defini un bon son aj sjsjjsjjs jsjjdjdjdjdjd djdjjddjjd"}
+          "Titre non defini"}
       </Title>
       <SeekBar />
       <Controls />

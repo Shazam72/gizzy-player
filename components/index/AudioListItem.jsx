@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
 
 const AudioListItem = memo(
   ({ item, onOptionPress, viewableItems, index, onAudioListItemPress }) => {
@@ -41,7 +42,7 @@ const AudioListItem = memo(
               <Text style={[styles.audioItemTitle]} numberOfLines={1}>
                 {item.filename}
               </Text>
-              <Text style={[styles.audioItemSubTitle]}>{item.duration}</Text>
+              <Text style={[styles.audioItemSubTitle]}>{convertToNormalTimestamp(item.duration)}</Text>
             </View>
           </View>
         </TouchableWithoutFeedback>

@@ -25,7 +25,7 @@ const keyExtractor = (item) => item.id;
 
 export default function AudioList({ list }) {
   const { mediaInfo, getAudioIndexByURI } = useMediaContext();
-  let { playerInfo, updatePlayerInfo, playbackStatus, updatePlaybackStatus } =
+  let { playerInfo, updatePlayerInfo } =
     useContext(PlayerContext);
   const { playerObj } = playerInfo;
   const navigation = useNavigation();
@@ -37,7 +37,6 @@ export default function AudioList({ list }) {
   const viItems = useSharedValue([]);
 
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-    console.log(viewableItems.length);
     viItems.value = viewableItems.filter((v) => v.isViewable);
   }, []);
 
@@ -48,35 +47,7 @@ export default function AudioList({ list }) {
       setModalData((v) => ({ visible: !v.visible, item, index })),
     []
   );
-  const onPlaybackStatusUpdate = useCallback(
-    async (newPlaybackStatus) => {
-      if (newPlaybackStatus.isLoaded && newPlaybackStatus.isPlaying) {
-        updatePlaybackStatus(newPlaybackStatus);
-      }
-      if (newPlaybackStatus.didJustFinish) {
-        let newCurrentAudioIndex = getAudioIndexByURI(
-          newPlaybackStatus.uri,
-          true
-        );
 
-        if (newCurrentAudioIndex == -1) {
-          console.error("Audio index for", newPlaybackStatus.uri, "not found");
-          return;
-        }
-        newCurrentAudioIndex++;
-        if (newCurrentAudioIndex >= mediaInfo.totalCount)
-          newCurrentAudioIndex = 0;
-        let newCurrentAudio = mediaInfo.audioList[newCurrentAudioIndex];
-        let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
-        updatePlayerInfo({
-          playerStatus: status,
-          currentAudioIndex: newCurrentAudioIndex,
-          currentAudio: newCurrentAudio,
-        });
-      }
-    },
-    [mediaInfo.audioList]
-  );
   const onAudioListItemPress = useCallback(
     async (item, index) => {
       let currentStatus = await playerObj.getStatusAsync();
@@ -89,7 +60,6 @@ export default function AudioList({ list }) {
           playerStatus: status,
           currentAudioIndex: index,
         });
-        playerObj.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
         return navigation.navigate("player");
       }
 
@@ -116,7 +86,7 @@ export default function AudioList({ list }) {
       });
       return navigation.navigate("player");
     },
-    [onPlaybackStatusUpdate, getAudioIndexByURI]
+    [getAudioIndexByURI]
   );
 
   const renderItem = ({ item, index }) => {
