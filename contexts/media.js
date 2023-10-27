@@ -2,126 +2,105 @@ import {
   useState,
   useEffect,
   createContext,
-  useMemo,
-  useCallback,
   useRef,
+  useContext,
+  useCallback,
 } from "react";
 import * as MediaLibrary from "expo-media-library";
-import { Audio } from "expo-av";
+import { exludeAudioFromDirectories } from "../utils/sort-filters";
+import { Text } from "react-native";
 
 const MediaContext = createContext();
 
-const exludeAudioFromDirectories = (
-  list = [],
-  directories = ["file:///storage/emulated/0/Android/media/com."]
-) => {
-  let filteredList = list.filter((item) => {
-    let shoulBeKeeped = true;
-
-    shoulBeKeeped = directories.reduce((prevTest, dir) => {
-      return !String(item?.uri).includes(dir) && prevTest;
-    }, shoulBeKeeped);
-
-    return shoulBeKeeped;
+const getAudioFiles = async (batch = 0, first = 20) => {
+  let list = await MediaLibrary.getAssetsAsync({
+    mediaType: "audio",
+    // after: String(batch * first),
+    // first,
   });
-  return filteredList;
-};
+  list = await MediaLibrary.getAssetsAsync({
+    mediaType: "audio",
+    first: list.totalCount,
+    // after: String(batch * first),
+    // first,
+  });
 
-export const playAudio = async (playerObj, uri) => {
-  return await playerObj.loadAsync({ uri }, { shouldPlay: true });
+  return {
+    totalCount: list.totalCount,
+    audioList: exludeAudioFromDirectories(list.assets),
+    // currentBatch: batch + 1,
+  };
 };
-export const playAnotherAudio = async (playerObj, uri) => {
-  await playerObj.stopAsync();
-  await playerObj.unloadAsync();
-  return await playAudio(playerObj, uri);
+const askPermission = async () => {
+  let { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
+
+  if (status === "granted") return true;
+
+  if (status === "denied" && canAskAgain) {
+    alert("Vous devez autorizer les permissions");
+  }
+  return false;
 };
-export const pauseAudio = async (playerObj) => {
-  return await playerObj.setStatusAsync({ shouldPlay: false });
-};
-export const resumeAudio = async (playerObj) => {
-  return await playerObj.playAsync();
+const checkPermissions = async () => {
+  const permissionStatus = await MediaLibrary.getPermissionsAsync();
+  if (!permissionStatus.granted && permissionStatus.canAskAgain) {
+    return await askPermission();
+  }
+  if (!permissionStatus.granted && !permissionStatus.canAskAgain) {
+    return false;
+  }
+  if (permissionStatus.granted) {
+    return true;
+  }
 };
 
 export const MediaContextProvider = ({ children }) => {
   const [mediaInfo, setMediaInfo] = useState({
+    totalCount: null,
     audioList: [],
-    granted: false,
-  });
-  const [playerInfo, setPlayerInfo] = useState({
-    currentAudio: null,
-    playerStatus: null,
-    playerObj: new Audio.Sound(),
-    currentAudioIndex: null,
   });
 
-  const filteredAudioList = useMemo(() => {
-    let list = exludeAudioFromDirectories(mediaInfo.audioList);
-    return list;
-  }, [mediaInfo.audioList]);
-
-  const getAudioFiles = useCallback(async () => {
-    let list = await MediaLibrary.getAssetsAsync({
-      mediaType: "audio",
-    });
-    list = await MediaLibrary.getAssetsAsync({
-      mediaType: "audio",
-      first: list.totalCount,
-    });
-    setMediaInfo((v) => ({
-      ...v,
-      granted: true,
-      audioList: [...list.assets],
-    }));
-  }, []);
-  const askPermission = useCallback(async () => {
-    let { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
-
-    if (status === "denied" && canAskAgain) {
-      alert("Vous devez autorizer les permissions");
-      return;
-    }
-    if (status === "denied" && !canAskAgain) {
-      setMediaInfo({ granted: false });
-      return;
-    }
-    if (status === "granted") getAudioFiles();
-  }, []);
-  const checkPermissions = useCallback(async () => {
-    const permissionStatus = await MediaLibrary.getPermissionsAsync();
-    if (!permissionStatus.granted && permissionStatus.canAskAgain) {
-      askPermission();
-    }
-    if (!permissionStatus.granted && !permissionStatus.canAskAgain) {
-      setMediaInfo({ granted: false });
-
-      return;
-    }
-    if (permissionStatus.granted) {
-      getAudioFiles();
-    }
-  },[]);
-
-  const updatePlayerInfo = (newState) => {
-    setPlayerInfo((v) => ({
-      ...v,
-      ...newState,
-    }));
+  const updateMediaInfo = (newMediaInfo) => {
+    setMediaInfo((v) => ({ ...v, ...newMediaInfo }));
   };
+
   useEffect(() => {
-    checkPermissions();
+    checkPermissions().then((permission) => {
+      if (permission === true) {
+        getAudioFiles(mediaInfo.currentBatch).then((filesInfo) => {
+          updateMediaInfo({
+            totalCount: filesInfo.audioList.length,
+            audioList: filesInfo.audioList,
+          });
+        });
+      }
+    });
     return () => {};
   }, []);
   return (
-    <MediaContext.Provider
-      value={{
-        audioList: filteredAudioList,
-        updatePlayerInfo,
-        playerInfo,
-      }}
-    >
+    <MediaContext.Provider value={{ mediaInfo, updateMediaInfo }}>
       {children}
     </MediaContext.Provider>
   );
+};
+
+export const useMediaContext = () => {
+  const mediaCtx = useContext(MediaContext);
+
+  const getAudioIndexByURI = useCallback(
+    (
+      uri,
+      autoCompletefilePrefix = false,
+      list = mediaCtx.mediaInfo.audioList
+    ) => {
+      let fullURI = uri;
+      if (autoCompletefilePrefix) fullURI = "file://" + fullURI;
+      return list.findIndex((audio) => audio.uri == fullURI);
+    },
+    [mediaCtx.mediaInfo.audioList]
+  );
+
+  return { ...mediaCtx, getAudioIndexByURI };
 };
 
 export default MediaContext;

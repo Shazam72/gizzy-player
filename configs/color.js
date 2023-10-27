@@ -3,5 +3,5 @@ export default colors = {
 	black:"#000",
 	white:"#fff",
 	primary:"#d406d4",
-	lightGray: "#"
+	lightGray: "#d3d3d3"
 }
