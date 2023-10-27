@@ -11,6 +11,5 @@ export default function index() {
     <View>
       <AudioList list={mediaInfo.audioList} />
     </View>
-    // {/* <OptionModal onClose={onCloseModal} {...modal} /> */}
   );
 }

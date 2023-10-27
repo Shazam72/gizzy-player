@@ -20,8 +20,6 @@ export default function Controls() {
       <AntDesign name="banckward" size={35} />
       <AntDesign
         name={playPauseIcon}
-        // name={playerInfo.playerStatus && playerInfo.playerStatus.isPlaying ?  "pausecircle"
-        // : "playcircleo"}
         onPress={playPause}
         size={60}
       />

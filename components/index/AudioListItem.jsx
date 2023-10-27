@@ -1,30 +1,33 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  Dimensions,
-} from "react-native";
-import { useCallback, memo, useContext, useState } from "react";
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
+import { memo } from "react";
 import color from "../../configs/color";
-import MediaContext from "../../contexts/media";
-import {
-  pauseAudio,
-  playAnotherAudio,
-  playAudio,
-  resumeAudio,
-} from "../../utils/audio-control";
-import { useNavigation } from "expo-router";
-import PlayerContext from "../../contexts/player";
 import { Entypo, SimpleLineIcons } from "@expo/vector-icons";
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 
 const AudioListItem = memo(
-  ({ item, onOptionPress, index, onAudioListItemPress }) => {
-    console.log("item rendered ", index);
-    // const onAudioOptionPress = () => onOptionPress(item);
+  ({ item, onOptionPress, viewableItems, index, onAudioListItemPress }) => {
+    const rStyle = useAnimatedStyle(() => {
+      const isVisible = Boolean(
+        viewableItems.value.find((v) => v.item.id === item.id)
+      );
+
+      return {
+        opacity: withTiming(isVisible ? 1 : 0),
+        transform: [
+          {
+            scale: withTiming(isVisible ? 1 : 0.6),
+          },
+        ],
+      };
+    }, [viewableItems, item]);
+    const onAudioOptionPress = () => onOptionPress(item, index);
     const onAudioItemPress = () => onAudioListItemPress(item, index);
+
     return (
-      <View style={[styles.wrapper]}>
+      <Animated.View style={[styles.wrapper, rStyle]}>
         <TouchableWithoutFeedback onPress={onAudioItemPress}>
           <View style={styles.audioItemContainer}>
             <View style={styles.iconContainer}>
@@ -42,12 +45,12 @@ const AudioListItem = memo(
             </View>
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => {}}>
+        <TouchableWithoutFeedback onPress={onAudioOptionPress}>
           <View style={styles.audioItemDots}>
             <Entypo name="dots-three-vertical" color="#959595" size={24} />
           </View>
         </TouchableWithoutFeedback>
-      </View>
+      </Animated.View>
     );
   }
 );
@@ -84,8 +87,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: color.lightGray,
-    justifyContent:"center",
-    alignItems:"center"
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

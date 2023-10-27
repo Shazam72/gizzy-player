@@ -1,5 +1,5 @@
-import { FlatList, StyleSheet, Text, Dimensions, View } from "react-native";
-import React, { useCallback, useContext } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+import React, { useCallback, useContext, useState } from "react";
 import AudioListItem from "./AudioListItem";
 import {
   pauseAudio,
@@ -10,6 +10,8 @@ import {
 import { useNavigation } from "expo-router";
 import MediaContext, { useMediaContext } from "../../contexts/media";
 import PlayerContext from "../../contexts/player";
+import OptionModal from "../OptionModal";
+import { useSharedValue } from "react-native-reanimated";
 
 const ITEM_HEIGHT = 65;
 const getItemLayout = (data, index) => {
@@ -25,36 +27,56 @@ export default function AudioList({ list }) {
   const { mediaInfo, getAudioIndexByURI } = useMediaContext();
   let { playerInfo, updatePlayerInfo, playbackStatus, updatePlaybackStatus } =
     useContext(PlayerContext);
-  const { currentAudio, currentAudioIndex, playerObj, playerStatus } =
-    playerInfo;
+  const { playerObj } = playerInfo;
   const navigation = useNavigation();
+  const [modalData, setModalData] = useState({
+    visible: false,
+    item: false,
+    index: -1,
+  });
+  const viItems = useSharedValue([]);
 
-  const onPlaybackStatusUpdate = useCallback(async (newPlaybackStatus) => {
-    if (newPlaybackStatus.isLoaded && newPlaybackStatus.isPlaying) {
-      updatePlaybackStatus(newPlaybackStatus);
-    }
-    if (newPlaybackStatus.didJustFinish) {
-      let newCurrentAudioIndex = getAudioIndexByURI(
-        newPlaybackStatus.uri,
-        true
-      );
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+    console.log(viewableItems.length);
+    viItems.value = viewableItems.filter((v) => v.isViewable);
+  }, []);
 
-      if (newCurrentAudioIndex == -1) {
-        console.error("Audio index for", newPlaybackStatus.uri, "not found");
-        return;
+  const onCloseModal = () => setModalData((v) => ({ visible: !v.visible }));
+
+  const onAudioOptionPress = useCallback(
+    (item, index) =>
+      setModalData((v) => ({ visible: !v.visible, item, index })),
+    []
+  );
+  const onPlaybackStatusUpdate = useCallback(
+    async (newPlaybackStatus) => {
+      if (newPlaybackStatus.isLoaded && newPlaybackStatus.isPlaying) {
+        updatePlaybackStatus(newPlaybackStatus);
       }
-      newCurrentAudioIndex++
-      if (newCurrentAudioIndex >= mediaInfo.totalCount)
-        newCurrentAudioIndex = 0;
-      let newCurrentAudio = mediaInfo.audioList[newCurrentAudioIndex];
-      let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
-      updatePlayerInfo({
-        playerStatus: status,
-        currentAudioIndex: newCurrentAudioIndex,
-        currentAudio: newCurrentAudio,
-      });
-    }
-  }, [mediaInfo.audioList]);
+      if (newPlaybackStatus.didJustFinish) {
+        let newCurrentAudioIndex = getAudioIndexByURI(
+          newPlaybackStatus.uri,
+          true
+        );
+
+        if (newCurrentAudioIndex == -1) {
+          console.error("Audio index for", newPlaybackStatus.uri, "not found");
+          return;
+        }
+        newCurrentAudioIndex++;
+        if (newCurrentAudioIndex >= mediaInfo.totalCount)
+          newCurrentAudioIndex = 0;
+        let newCurrentAudio = mediaInfo.audioList[newCurrentAudioIndex];
+        let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
+        updatePlayerInfo({
+          playerStatus: status,
+          currentAudioIndex: newCurrentAudioIndex,
+          currentAudio: newCurrentAudio,
+        });
+      }
+    },
+    [mediaInfo.audioList]
+  );
   const onAudioListItemPress = useCallback(
     async (item, index) => {
       let currentStatus = await playerObj.getStatusAsync();
@@ -97,18 +119,17 @@ export default function AudioList({ list }) {
     [onPlaybackStatusUpdate, getAudioIndexByURI]
   );
 
-  const renderItem = useCallback(
-    ({ item, index }) => {
-      return (
-        <AudioListItem
-          onAudioListItemPress={onAudioListItemPress}
-          item={item}
-          index={index}
-        />
-      );
-    },
-    [onAudioListItemPress]
-  );
+  const renderItem = ({ item, index }) => {
+    return (
+      <AudioListItem
+        onAudioListItemPress={onAudioListItemPress}
+        onOptionPress={onAudioOptionPress}
+        item={item}
+        viewableItems={viItems}
+        index={index}
+      />
+    );
+  };
 
   return (
     <View style={styles.wrapper}>
@@ -119,7 +140,9 @@ export default function AudioList({ list }) {
         renderItem={renderItem}
         contentContainerStyle={{ gap: 10 }}
         getItemLayout={getItemLayout}
+        onViewableItemsChanged={onViewableItemsChanged}
       />
+      <OptionModal onClose={onCloseModal} {...modalData} />
     </View>
   );
 }

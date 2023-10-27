@@ -20,7 +20,7 @@ export const usePlayerControls = () => {
       status = await resumeAudio(playerObj);
 
     if (playerStatus.isPlaying && playerStatus.isLoaded)
-      status = await pauseAudio(playerObj);
+      status = await pauseAudio(playerObj );
 
     updatePlayerInfo({ playerStatus: status });
   };
