@@ -24,6 +24,7 @@ export default function AppLayout() {
               color: colors.black,
             },
             tabBarActiveTintColor: colors.primary,
+            tabBarShowLabel: false
           }}
         >
           <Tabs.Screen
@@ -34,7 +35,7 @@ export default function AppLayout() {
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="my-library-music"
-                  size={20}
+                  size={25}
                   color={focused ? colors.primary : "black"}
                 />
               ),
@@ -49,7 +50,7 @@ export default function AppLayout() {
               tabBarIcon: ({ focused }) => (
                 <Ionicons
                   name="md-headset-sharp"
-                  size={20}
+                  size={25}
                   color={focused ? colors.primary : "black"}
                 />
               ),
@@ -63,7 +64,7 @@ export default function AppLayout() {
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="my-library-music"
-                  size={20}
+                  size={25}
                   color={focused ? colors.primary : "black"}
                 />
               ),

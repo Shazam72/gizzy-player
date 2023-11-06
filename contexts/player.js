@@ -1,5 +1,5 @@
 import { Audio } from "expo-av";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const PlayerContext = createContext({});
 
@@ -13,6 +13,12 @@ export const PlayerContextProvider = ({ children }) => {
   const updatePlayerInfo = (newState) => {
     setPlayerInfo((v) => ({ ...v, ...newState }));
   };
+
+  useEffect(() => {
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+    });
+  }, []);
 
   return (
     <PlayerContext.Provider

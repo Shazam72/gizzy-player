@@ -13,10 +13,11 @@ import {
 } from "@expo/vector-icons";
 import React from "react";
 import color from "../configs/color";
+import convertToNormalTimestamp from "../utils/convertToNormalTimestamp";
 
 export default function OptionModal({ visible, onClose, item }) {
   return (
-    <Modal transparent animationType="slide" useNativeDriver={true} visible={visible}>
+    <Modal transparent animationType="slide" useNativeDriver={false} visible={visible}>
       <View style={styles.container}>
         <View style={styles.modalHead}>
           <Text style={styles.modalHeadTitle}>Option de la musique</Text>
@@ -25,7 +26,7 @@ export default function OptionModal({ visible, onClose, item }) {
           <Text style={styles.audioTitle} numOfLines={1}>
             {item?.filename}
           </Text>
-          <Text style={styles.audioSubTitle}>{item?.duration}</Text>
+          <Text style={styles.audioSubTitle}>{convertToNormalTimestamp(item?.duration)}</Text>
         </View>
         
         <View style={styles.optionsContainer}>
