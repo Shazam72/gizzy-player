@@ -8,7 +8,6 @@ import PlayerContext from "../contexts/player";
 import MediaContext from "../contexts/media";
 import { usePlayerControls } from "../hooks/player-controls";
 
-
 export default function Player() {
   const { playerInfo } = useContext(PlayerContext);
   const { mediaInfo } = useContext(MediaContext);
@@ -17,10 +16,7 @@ export default function Player() {
   return (
     <View style={[styles.wrapper]}>
       <Viewer />
-      <Title>
-        {playerInfo?.currentAudio?.filename ??
-          "Titre non defini"}
-      </Title>
+      <Title>{playerInfo?.currentAudio?.filename ?? "Titre non defini"}</Title>
       <SeekBar />
       <Controls />
     </View>

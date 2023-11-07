@@ -1,9 +1,9 @@
-import { AVPlaybackStatus, Audio } from "expo-av";
+import { AVPlaybackStatus, AVPlaybackStatusSuccess, Audio } from "expo-av";
 import { Asset } from "expo-media-library";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 export interface PlayerInfoInterface {
-  playerStatus?: AVPlaybackStatus | null;
+  playerStatus?: AVPlaybackStatusSuccess | null;
   playerObj?: Audio.Sound;
   currentAudio?: Asset | null;
   currentAudioIndex?: number;
