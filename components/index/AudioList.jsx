@@ -94,7 +94,6 @@ export default function AudioList({ list }) {
           onOptionPress={onAudioOptionPress}
           item={item}
           index={index}
-          scrollY={scrollY}
         />
       );
     },
