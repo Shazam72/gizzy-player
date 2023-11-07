@@ -23,6 +23,11 @@ export interface MediaInfoInterface {
 export interface MediaContextInterface {
   mediaInfo: MediaInfoInterface;
   updateMediaInfo: React.Dispatch<MediaInfoInterface>;
+  getAudioIndexByURI?: (
+    uri: string,
+    autoCompletefilePrefix: boolean,
+    list: AudioFile[]
+  ) => number;
 }
 
 const MediaContext = createContext<MediaContextInterface>(null);
@@ -102,12 +107,12 @@ export const MediaContextProvider = ({ children }) => {
 export const useMediaContext: () => MediaContextInterface = () => {
   const mediaCtx: MediaContextInterface = useContext(MediaContext);
 
-  const getAudioIndexByURI = useCallback(
-    (
-      uri: string,
-      autoCompletefilePrefix: boolean = false,
-      list: AudioFile[] = mediaCtx.mediaInfo.audioList
-    ) => {
+  const getAudioIndexByURI: (
+    uri: string,
+    autoCompletefilePrefix: boolean,
+    list: AudioFile[]
+  ) => number = useCallback(
+    (uri, autoCompletefilePrefix, list = mediaCtx.mediaInfo.audioList) => {
       let fullURI = uri;
       if (autoCompletefilePrefix) fullURI = "file://" + fullURI;
       return list.findIndex((audio) => audio.uri == fullURI);
