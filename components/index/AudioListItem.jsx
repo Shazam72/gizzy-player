@@ -9,6 +9,7 @@ import { memo, useState } from "react";
 import color from "../../configs/color";
 import { Entypo, SimpleLineIcons } from "@expo/vector-icons";
 import Animated, {
+  interpolate,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
@@ -17,51 +18,38 @@ import OptionModal from "../OptionModal";
 const ITEM_HEIGHT = 55;
 
 const AudioListItem = memo(
-  ({ item, onAudioListItemPress, viewableItems, index, onOptionPress }) => {
-    const rStyle = useAnimatedStyle(() => {
-      const isVisible = Boolean(
-        viewableItems.value.find((v) => v.item.id === item.id)
-      );
-
-      return {
-        opacity: withTiming(isVisible ? 1 : 0),
-        transform: [
-          {
-            scale: withTiming(isVisible ? 1 : 0.6),
-          },
-        ],
-      };
-    }, []);
+  ({ item, onAudioListItemPress, index, onOptionPress }) => {
     const onAudioItemPress = () => onAudioListItemPress(item, index);
     const onAudioOptionPress = () => onOptionPress(item, index);
 
     return (
-      <>
-        <Animated.View style={[styles.wrapper, rStyle]}>
-          <TouchableWithoutFeedback onPress={onAudioItemPress}>
-            <View style={styles.audioItemContainer}>
-              <View style={styles.iconContainer}>
-                <SimpleLineIcons
-                  color={color.primary}
-                  size={30}
-                  name="music-tone"
-                />
-              </View>
-              <View style={styles.audioItemInfoContainer}>
-                <Text style={[styles.audioItemTitle]} numberOfLines={1}>
-                  {item.filename}
-                </Text>
-                <Text style={[styles.audioItemSubTitle]}>
-                  {convertToNormalTimestamp(item.duration)}
-                </Text>
-              </View>
+      <View style={[styles.wrapper]}>
+        <TouchableWithoutFeedback onPress={onAudioItemPress}>
+          <View style={styles.audioItemContainer}>
+            <View style={styles.iconContainer}>
+              <SimpleLineIcons
+                color={color.primary}
+                size={30}
+                name="music-tone"
+              />
             </View>
-          </TouchableWithoutFeedback>
-          <TouchableOpacity style={styles.audioItemDots} onPress={onAudioOptionPress}>
-            <Entypo name="dots-three-vertical" color="#959595" size={16} />
-          </TouchableOpacity>
-        </Animated.View>
-      </>
+            <View style={styles.audioItemInfoContainer}>
+              <Text style={[styles.audioItemTitle]} numberOfLines={1}>
+                {item.filename}
+              </Text>
+              <Text style={[styles.audioItemSubTitle]}>
+                {convertToNormalTimestamp(item.duration)}
+              </Text>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+        <TouchableOpacity
+          style={styles.audioItemDots}
+          onPress={onAudioOptionPress}
+        >
+          <Entypo name="dots-three-vertical" color="#959595" size={16} />
+        </TouchableOpacity>
+      </View>
     );
   }
 );
@@ -70,8 +58,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     height: ITEM_HEIGHT,
-    // borderWidth:2,
-    // borderColor:"red"
   },
   audioItemContainer: {
     flexDirection: "row",
@@ -95,9 +81,7 @@ const styles = StyleSheet.create({
     height: 35,
     justifyContent: "center",
     alignItems: "center",
-    // borderWidth:2,
     borderRadius: 35 / 2,
-    // borderColor:"red"
   },
   iconContainer: {
     width: 50,

@@ -11,7 +11,10 @@ import { useNavigation } from "expo-router";
 import MediaContext, { useMediaContext } from "../../contexts/media";
 import PlayerContext from "../../contexts/player";
 import OptionModal from "../OptionModal";
-import { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 
 const ITEM_HEIGHT = 55;
 const getItemLayout = (data, index) => {
@@ -33,10 +36,6 @@ export default function AudioList({ list }) {
     item: false,
     index: -1,
   });
-  const viItems = useSharedValue([]);
-  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-    viItems.value = viewableItems;
-  }, []);
 
   const onCloseModal = () => setModalData((v) => ({ visible: !v.visible }));
 
@@ -94,8 +93,8 @@ export default function AudioList({ list }) {
           onAudioListItemPress={onAudioListItemPress}
           onOptionPress={onAudioOptionPress}
           item={item}
-          viewableItems={viItems}
           index={index}
+          scrollY={scrollY}
         />
       );
     },
@@ -111,8 +110,6 @@ export default function AudioList({ list }) {
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           contentContainerStyle={{ gap: 10 }}
-          initialNumToRender={20}
-          onViewableItemsChanged={onViewableItemsChanged}
         />
       </View>
       <OptionModal onClose={onCloseModal} {...modalData} />
@@ -121,9 +118,7 @@ export default function AudioList({ list }) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    // flex:1,
-  },
+  wrapper: {},
   listContainer: {
     paddingLeft: 10,
     paddingVertical: 10,
