@@ -14,6 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
 import OptionModal from "../OptionModal";
+const ITEM_HEIGHT = 55;
 
 const AudioListItem = memo(
   ({ item, onAudioListItemPress, viewableItems, index, onOptionPress }) => {
@@ -30,7 +31,7 @@ const AudioListItem = memo(
           },
         ],
       };
-    }, [viewableItems, item]);
+    }, []);
     const onAudioItemPress = () => onAudioListItemPress(item, index);
     const onAudioOptionPress = () => onOptionPress(item, index);
 
@@ -68,6 +69,9 @@ const AudioListItem = memo(
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
+    height: ITEM_HEIGHT,
+    // borderWidth:2,
+    // borderColor:"red"
   },
   audioItemContainer: {
     flexDirection: "row",

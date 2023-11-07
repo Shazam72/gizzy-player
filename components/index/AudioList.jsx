@@ -13,7 +13,7 @@ import PlayerContext from "../../contexts/player";
 import OptionModal from "../OptionModal";
 import { useSharedValue } from "react-native-reanimated";
 
-const ITEM_HEIGHT = 65;
+const ITEM_HEIGHT = 55;
 const getItemLayout = (data, index) => {
   return {
     length: ITEM_HEIGHT,
@@ -34,9 +34,8 @@ export default function AudioList({ list }) {
     index: -1,
   });
   const viItems = useSharedValue([]);
-
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-    viItems.value = viewableItems.filter((v) => v.isViewable);
+    viItems.value = viewableItems;
   }, []);
 
   const onCloseModal = () => setModalData((v) => ({ visible: !v.visible }));
@@ -112,7 +111,7 @@ export default function AudioList({ list }) {
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           contentContainerStyle={{ gap: 10 }}
-          getItemLayout={getItemLayout}
+          initialNumToRender={20}
           onViewableItemsChanged={onViewableItemsChanged}
         />
       </View>
