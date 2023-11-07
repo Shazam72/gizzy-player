@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     height: ITEM_HEIGHT,
+    marginBottom:10,
   },
   audioItemContainer: {
     flexDirection: "row",

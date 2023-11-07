@@ -24,7 +24,8 @@ export default function AppLayout() {
               color: colors.black,
             },
             tabBarActiveTintColor: colors.primary,
-            tabBarShowLabel: false
+            tabBarShowLabel: false,
+            headerShown:false,
           }}
         >
           <Tabs.Screen

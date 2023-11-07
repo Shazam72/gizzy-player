@@ -39,33 +39,19 @@ const OptionItem = ({
   );
 };
 
-export default function OptionModal({ visible, onClose, item, index }) {
-  const { mediaInfo, getAudioIndexByURI } = useMediaContext();
-  const { playerInfo, updatePlayerInfo } = useContext(PlayerContext);
-  const { playerObj } = playerInfo;
-  const navigation = useNavigation();
-
-  const onListeningOptionPress = async () => {
-    let currentStatus = await playerObj.getStatusAsync();
-    let status = null;
-
-    if (currentStatus.isLoaded) {
-      await playerObj.stopAsync();
-      await playerObj.unloadAsync();
-    }
-
-    status = await playAudio(playerObj, item.uri);
-    updatePlayerInfo({
-      currentAudio: item,
-      currentAudioIndex: index,
-      playerStatus: status,
-    });
-    return navigation.navigate("player");
-  };
-  const addAsFavourite = () => {};
-  const addToPlaylist = () => {
-    navigation.navigate("playlists");
-  };
+export default function OptionModal({
+  visible,
+  onClose,
+  item,
+  index,
+  modalOptionsFunctions,
+}) {
+  const onListeningPress = () =>
+    modalOptionsFunctions.onListeningOptionPress(item, index);
+  const onFavouritePress = () =>
+    modalOptionsFunctions.addAsFavourite(item, index);
+  const onAddPlaylistPress = () =>
+    modalOptionsFunctions.addToPlaylist(item, index);
 
   return (
     <Modal
@@ -98,7 +84,7 @@ export default function OptionModal({ visible, onClose, item, index }) {
             name="play"
             color="black"
             optionName="Écouter"
-            onPress={onListeningOptionPress}
+            onPress={onListeningPress}
           />
           <OptionItem
             library={MaterialIcons}
@@ -106,7 +92,7 @@ export default function OptionModal({ visible, onClose, item, index }) {
             name="favorite-outline"
             color="black"
             optionName="Favoris"
-            onPress={addAsFavourite}
+            onPress={onFavouritePress}
           />
           <OptionItem
             library={FontAwesome5}
@@ -114,7 +100,7 @@ export default function OptionModal({ visible, onClose, item, index }) {
             name="plus-square"
             color="black"
             optionName="Ajouter à une playlist"
-            onPress={addToPlaylist}
+            onPress={onAddPlaylistPress}
           />
         </View>
       </View>

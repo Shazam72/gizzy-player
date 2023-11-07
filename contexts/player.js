@@ -8,7 +8,7 @@ export const PlayerContextProvider = ({ children }) => {
     playerStatus: null,
     playerObj: new Audio.Sound(),
     currentAudio: null,
-    currentAudioIndex: null,
+    currentAudioIndex: -1,
   });
   const updatePlayerInfo = (newState) => {
     setPlayerInfo((v) => ({ ...v, ...newState }));
