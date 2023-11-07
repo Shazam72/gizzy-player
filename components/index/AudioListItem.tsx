@@ -15,10 +15,23 @@ import Animated, {
 } from "react-native-reanimated";
 import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
 import OptionModal from "../OptionModal";
+import { Asset } from "expo-media-library";
 const ITEM_HEIGHT = 55;
 
+interface AudioListItemProps {
+  item: Asset;
+  onAudioListItemPress: (item: Asset, index: number) => void;
+  index: number;
+  onOptionPress: (item: Asset, index: number) => void;
+}
+
 const AudioListItem = memo(
-  ({ item, onAudioListItemPress, index, onOptionPress }) => {
+  ({
+    item,
+    onAudioListItemPress,
+    index,
+    onOptionPress,
+  }: AudioListItemProps) => {
     const onAudioItemPress = () => onAudioListItemPress(item, index);
     const onAudioOptionPress = () => onOptionPress(item, index);
 
@@ -58,7 +71,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     height: ITEM_HEIGHT,
-    marginBottom:10,
+    marginBottom: 10,
   },
   audioItemContainer: {
     flexDirection: "row",

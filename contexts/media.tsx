@@ -8,15 +8,10 @@ import React, {
 } from "react";
 import * as MediaLibrary from "expo-media-library";
 import { exludeAudioFromDirectories } from "../utils/sort-filters";
-import { Text } from "react-native";
-
-export type AudioFile = {
-  uri: string;
-};
 
 export interface MediaInfoInterface {
   totalCount?: number;
-  audioList?: AudioFile[];
+  audioList?: MediaLibrary.Asset[];
   currentBatch?: number;
 }
 
@@ -25,14 +20,14 @@ export interface MediaContextInterface {
   updateMediaInfo: React.Dispatch<MediaInfoInterface>;
   getAudioIndexByURI?: (
     uri: string,
-    autoCompletefilePrefix: boolean,
-    list: AudioFile[]
+    autoCompletefilePrefix?: boolean,
+    list?: MediaLibrary.Asset[]
   ) => number;
 }
 
 const MediaContext = createContext<MediaContextInterface>(null);
 
-const getAudioFiles = async (batch = 0, first = 20) => {
+const getAssets = async (batch = 0, first = 20) => {
   let list = await MediaLibrary.getAssetsAsync({
     mediaType: "audio",
     // after: String(batch * first),
@@ -87,7 +82,7 @@ export const MediaContextProvider = ({ children }) => {
   useEffect(() => {
     checkPermissions().then((permission) => {
       if (permission === true) {
-        getAudioFiles(mediaInfo.currentBatch).then((filesInfo) => {
+        getAssets(mediaInfo.currentBatch).then((filesInfo) => {
           updateMediaInfo({
             totalCount: filesInfo.audioList.length,
             audioList: filesInfo.audioList,
@@ -110,7 +105,7 @@ export const useMediaContext: () => MediaContextInterface = () => {
   const getAudioIndexByURI: (
     uri: string,
     autoCompletefilePrefix: boolean,
-    list: AudioFile[]
+    list: MediaLibrary.Asset[]
   ) => number = useCallback(
     (uri, autoCompletefilePrefix, list = mediaCtx.mediaInfo.audioList) => {
       let fullURI = uri;

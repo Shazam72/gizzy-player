@@ -20,6 +20,8 @@ import PlayerContext from "../contexts/player";
 import { useMediaContext } from "../contexts/media";
 import { useNavigation } from "expo-router";
 import { playAudio } from "../utils/audio-control";
+import { Asset } from "expo-media-library";
+import { ModalFunctionsType } from "./index/AudioList";
 
 const OptionItem = ({
   library: LibraryName,
@@ -39,13 +41,21 @@ const OptionItem = ({
   );
 };
 
+type OptionModalProps = {
+  visible?: boolean;
+  item: Asset;
+  index: number;
+  onClose: () => void;
+  modalOptionsFunctions: ModalFunctionsType;
+};
+
 export default function OptionModal({
   visible,
   onClose,
   item,
   index,
   modalOptionsFunctions,
-}) {
+}: OptionModalProps) {
   const onListeningPress = () =>
     modalOptionsFunctions.onListeningOptionPress(item, index);
   const onFavouritePress = () =>
@@ -57,7 +67,7 @@ export default function OptionModal({
     <Modal
       transparent
       animationType="slide"
-      useNativeDriver={true}
+      // useNativeDriver={true}
       visible={visible}
     >
       <View style={styles.container}>
