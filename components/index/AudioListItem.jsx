@@ -1,5 +1,11 @@
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
-import { memo } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from "react-native";
+import { memo, useState } from "react";
 import color from "../../configs/color";
 import { Entypo, SimpleLineIcons } from "@expo/vector-icons";
 import Animated, {
@@ -7,9 +13,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
+import OptionModal from "../OptionModal";
 
 const AudioListItem = memo(
-  ({ item, onOptionPress, viewableItems, index, onAudioListItemPress }) => {
+  ({ item, onAudioListItemPress, viewableItems, index, onOptionPress }) => {
     const rStyle = useAnimatedStyle(() => {
       const isVisible = Boolean(
         viewableItems.value.find((v) => v.item.id === item.id)
@@ -24,34 +31,36 @@ const AudioListItem = memo(
         ],
       };
     }, [viewableItems, item]);
-    const onAudioOptionPress = () => onOptionPress(item, index);
     const onAudioItemPress = () => onAudioListItemPress(item, index);
+    const onAudioOptionPress = () => onOptionPress(item, index);
 
     return (
-      <Animated.View style={[styles.wrapper, rStyle]}>
-        <TouchableWithoutFeedback onPress={onAudioItemPress}>
-          <View style={styles.audioItemContainer}>
-            <View style={styles.iconContainer}>
-              <SimpleLineIcons
-                color={color.primary}
-                size={30}
-                name="music-tone"
-              />
+      <>
+        <Animated.View style={[styles.wrapper, rStyle]}>
+          <TouchableWithoutFeedback onPress={onAudioItemPress}>
+            <View style={styles.audioItemContainer}>
+              <View style={styles.iconContainer}>
+                <SimpleLineIcons
+                  color={color.primary}
+                  size={30}
+                  name="music-tone"
+                />
+              </View>
+              <View style={styles.audioItemInfoContainer}>
+                <Text style={[styles.audioItemTitle]} numberOfLines={1}>
+                  {item.filename}
+                </Text>
+                <Text style={[styles.audioItemSubTitle]}>
+                  {convertToNormalTimestamp(item.duration)}
+                </Text>
+              </View>
             </View>
-            <View style={styles.audioItemInfoContainer}>
-              <Text style={[styles.audioItemTitle]} numberOfLines={1}>
-                {item.filename}
-              </Text>
-              <Text style={[styles.audioItemSubTitle]}>{convertToNormalTimestamp(item.duration)}</Text>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={onAudioOptionPress}>
-          <View style={styles.audioItemDots}>
-            <Entypo name="dots-three-vertical" color="#959595" size={24} />
-          </View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
+          </TouchableWithoutFeedback>
+          <TouchableOpacity style={styles.audioItemDots} onPress={onAudioOptionPress}>
+            <Entypo name="dots-three-vertical" color="#959595" size={16} />
+          </TouchableOpacity>
+        </Animated.View>
+      </>
     );
   }
 );
@@ -78,9 +87,13 @@ const styles = StyleSheet.create({
     color: "#a5a5a5",
   },
   audioItemDots: {
-    // borderWidth: 2,
+    width: 35,
+    height: 35,
     justifyContent: "center",
-    paddingRight: 10,
+    alignItems: "center",
+    // borderWidth:2,
+    borderRadius: 35 / 2,
+    // borderColor:"red"
   },
   iconContainer: {
     width: 50,

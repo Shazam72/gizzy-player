@@ -25,8 +25,7 @@ const keyExtractor = (item) => item.id;
 
 export default function AudioList({ list }) {
   const { mediaInfo, getAudioIndexByURI } = useMediaContext();
-  let { playerInfo, updatePlayerInfo } =
-    useContext(PlayerContext);
+  let { playerInfo, updatePlayerInfo } = useContext(PlayerContext);
   const { playerObj } = playerInfo;
   const navigation = useNavigation();
   const [modalData, setModalData] = useState({
@@ -89,31 +88,36 @@ export default function AudioList({ list }) {
     [getAudioIndexByURI]
   );
 
-  const renderItem = ({ item, index }) => {
-    return (
-      <AudioListItem
-        onAudioListItemPress={onAudioListItemPress}
-        onOptionPress={onAudioOptionPress}
-        item={item}
-        viewableItems={viItems}
-        index={index}
-      />
-    );
-  };
+  const renderItem = useCallback(
+    ({ item, index }) => {
+      return (
+        <AudioListItem
+          onAudioListItemPress={onAudioListItemPress}
+          onOptionPress={onAudioOptionPress}
+          item={item}
+          viewableItems={viItems}
+          index={index}
+        />
+      );
+    },
+    [onAudioListItemPress]
+  );
 
   return (
-    <View style={styles.wrapper}>
-      <FlatList
-        style={styles.listContainer}
-        data={list}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        contentContainerStyle={{ gap: 10 }}
-        getItemLayout={getItemLayout}
-        onViewableItemsChanged={onViewableItemsChanged}
-      />
+    <>
+      <View style={styles.wrapper}>
+        <FlatList
+          style={styles.listContainer}
+          data={list}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          contentContainerStyle={{ gap: 10 }}
+          getItemLayout={getItemLayout}
+          onViewableItemsChanged={onViewableItemsChanged}
+        />
+      </View>
       <OptionModal onClose={onCloseModal} {...modalData} />
-    </View>
+    </>
   );
 }
 
