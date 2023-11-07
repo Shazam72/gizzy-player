@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useState } from "react";
 import AudioListItem from "./AudioListItem";
 import {
   pauseAudio,
-  playAnotherAudio,
   playAudio,
   resumeAudio,
 } from "../../utils/audio-control";
@@ -75,7 +74,7 @@ export default function AudioList({ list }) {
         });
       }
 
-      status = await playAnotherAudio(playerObj, item.uri);
+      status = await playAudio(playerObj, item.uri);
       updatePlayerInfo({
         currentAudio: item,
         currentAudioIndex: index,

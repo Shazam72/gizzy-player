@@ -19,7 +19,7 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import PlayerContext from "../contexts/player";
 import { useMediaContext } from "../contexts/media";
 import { useNavigation } from "expo-router";
-import { playAnotherAudio, playAudio } from "../utils/audio-control";
+import { playAudio } from "../utils/audio-control";
 
 const OptionItem = ({
   library: LibraryName,

@@ -6,7 +6,6 @@ import Viewer from "../components/player/Viewer";
 import SeekBar from "../components/player/SeekBar";
 import PlayerContext from "../contexts/player";
 import MediaContext from "../contexts/media";
-import { playAnotherAudio } from "../utils/audio-control";
 import { usePlayerControls } from "../hooks/player-controls";
 
 
