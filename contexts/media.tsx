@@ -26,6 +26,32 @@ export interface MediaContextInterface {
 }
 
 const MediaContext = createContext<MediaContextInterface>(null);
+type FilterKeyOptions =
+  | "filename"
+  | "default"
+  | "mediaType"
+  | "width"
+  | "height"
+  | "creationTime"
+  | "modificationTime"
+  | "duration";
+type FilterOrder = "asc" | "desc";
+const audioFilter: (
+  array: MediaLibrary.Asset[],
+  filterKey?: FilterKeyOptions,
+  order?: FilterOrder
+) => MediaLibrary.Asset[] = (array, filterKey = "filename", order = "asc") => {
+  if (array.length == 0) return array;
+
+  return array.sort((a, b) => {
+    const aKey = a[filterKey];
+    const bKey = b[filterKey];
+
+    if (aKey > bKey) return order == "asc" ? 1 : -1;
+    if (aKey < bKey) return order == "asc" ? -1 : 1;
+    return 0;
+  });
+};
 
 const getAssets = async (batch = 0, first = 20) => {
   let list = await MediaLibrary.getAssetsAsync({
