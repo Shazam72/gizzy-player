@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React, {
   MutableRefObject,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -40,40 +41,58 @@ export default function Viewer() {
   );
 
   useEffect(() => {
-    flatRef.current.scrollToIndex({
-      index: playerInfo.currentAudioIndex,
-      animated: false,
-    });
+    if (playerInfo.currentAudioIndex != -1)
+      flatRef.current?.scrollToIndex({
+        index: playerInfo.currentAudioIndex,
+        animated: false,
+      });
   }, [playerInfo.currentAudioIndex]);
 
-  const onScroll = async (evt: NativeSyntheticEvent<NativeScrollEvent>) => {
-    let audioScrollIndex = evt.nativeEvent.contentOffset.x / ITEM_SIZE;
+  const onScrollEndDrag = useCallback(
+    async (evt: NativeSyntheticEvent<NativeScrollEvent>) => {
+      let audioScrollIndex = Math.round(
+        evt.nativeEvent.contentOffset.x / ITEM_SIZE
+      );
+      let shouldPlayNewSong = false;
+      let velocity = evt.nativeEvent.velocity.x;
+      let audioIndex = itemsList[audioScrollIndex];
 
-    let audioIndex = itemsList[audioScrollIndex];
-    if (audioIndex != undefined) {
-      let audio = mediaInfo.audioList[audioIndex];
-      try {
-        let status = await playAudio(playerInfo.playerObj, audio.uri);
-        updatePlayerInfo({
-          playerStatus: status,
-          currentAudioIndex: audioIndex,
-          currentAudio: audio,
-        });
-      } catch (error) {
-        console.error(error);
+      if (Math.abs(velocity) >= 1) {
+        shouldPlayNewSong = true;
+
+        if (velocity < 0) {
+          audioIndex++;
+        } else {
+          audioIndex--;
+        }
+      } else if (audioIndex && audioIndex != playerInfo.currentAudioIndex) {
+        shouldPlayNewSong = true;
       }
-    }
-  };
+      if (shouldPlayNewSong) {
+        let audio = mediaInfo.audioList[audioIndex];
+        try {
+          let status = await playAudio(playerInfo.playerObj, audio.uri);
+          updatePlayerInfo({
+            playerStatus: status,
+            currentAudioIndex: audioIndex,
+            currentAudio: audio,
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+    [playerInfo.currentAudioIndex, itemsList, mediaInfo.audioList]
+  );
   return (
     <FlatList
       ref={flatRef}
       contentContainerStyle={styles.wrapper}
       horizontal
-      onScroll={onScroll}
+      onScrollEndDrag={onScrollEndDrag}
       data={itemsList}
       showsHorizontalScrollIndicator={false}
       pagingEnabled
-      onEndReachedThreshold={1}
       getItemLayout={(data, index) => ({
         length: ITEM_SIZE,
         offset: ITEM_SIZE * index,
