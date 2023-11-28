@@ -55,9 +55,10 @@ export default function Viewer() {
       );
       let shouldPlayNewSong = false;
       let velocity = evt.nativeEvent.velocity.x;
+
       let audioIndex = itemsList[audioScrollIndex];
 
-      if (Math.abs(velocity) >= 1) {
+      if (Math.abs(velocity) >= 0.5) {
         shouldPlayNewSong = true;
 
         if (velocity < 0) {
