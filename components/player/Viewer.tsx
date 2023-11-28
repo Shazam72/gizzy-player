@@ -57,6 +57,8 @@ export default function Viewer() {
       let velocity = evt.nativeEvent.velocity.x;
 
       let audioIndex = itemsList[audioScrollIndex];
+      
+      if (!audioIndex) return;
 
       if (Math.abs(velocity) >= 0.5) {
         shouldPlayNewSong = true;
@@ -66,11 +68,13 @@ export default function Viewer() {
         } else {
           audioIndex--;
         }
-      } else if (audioIndex && audioIndex != playerInfo.currentAudioIndex) {
+      } else if (audioIndex != playerInfo.currentAudioIndex) {
         shouldPlayNewSong = true;
       }
       if (shouldPlayNewSong) {
         let audio = mediaInfo.audioList[audioIndex];
+        if (!audio) return;
+        
         try {
           let status = await playAudio(playerInfo.playerObj, audio.uri);
           updatePlayerInfo({
