@@ -5,7 +5,7 @@ import { pauseAudio, playAudio, resumeAudio } from "../../utils/audio-control";
 import { Tabs, useNavigation, useRouter } from "expo-router";
 import { useMediaContext } from "../../contexts/media";
 import PlayerContext from "../../contexts/player";
-import OptionModal from "../OptionModal";
+import OptionModal from "./OptionModal";
 import { AVPlaybackStatus, AVPlaybackStatusSuccess, Audio } from "expo-av";
 import { Asset } from "expo-media-library";
 

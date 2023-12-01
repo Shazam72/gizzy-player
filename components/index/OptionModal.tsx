@@ -13,15 +13,15 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import React, { memo, useCallback, useContext } from "react";
-import color from "../configs/color";
-import convertToNormalTimestamp from "../utils/convertToNormalTimestamp";
+import color from "../../configs/color";
+import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import PlayerContext from "../contexts/player";
-import { useMediaContext } from "../contexts/media";
+import PlayerContext from "../../contexts/player";
+import { useMediaContext } from "../../contexts/media";
 import { useNavigation } from "expo-router";
-import { playAudio } from "../utils/audio-control";
+import { playAudio } from "../../utils/audio-control";
 import { Asset } from "expo-media-library";
-import { ModalFunctionsType } from "./index/AudioList";
+import { ModalFunctionsType } from "./AudioList";
 
 const OptionItem = ({
   library: LibraryName,

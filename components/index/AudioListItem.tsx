@@ -14,7 +14,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
-import OptionModal from "../OptionModal";
+import OptionModal from "./OptionModal";
 import { Asset } from "expo-media-library";
 const ITEM_HEIGHT = 55;
 
