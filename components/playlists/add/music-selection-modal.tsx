@@ -9,14 +9,16 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
 const MusicSelectionModal = () => {
   const { mediaInfo } = useMediaContext();
-  const { addingList, addAudioToAddingList, removeAudioFromAddingList } = useContext(PlaylistContext);
+  const { addingList, addAudioToAddingList, removeAudioFromAddingList } =
+    useContext(PlaylistContext);
+  const selecteds = addingList.map((v) => v.id);
 
   const toogleAudio = (item: Asset, index: number) => {
-    const isInList = addingList.find((v) => v == item.id);
+    const isInList = addingList.find((v) => v.id == item.id);
 
     if (isInList) {
-      removeAudioFromAddingList(item.id);
-    } else addAudioToAddingList(item.id);
+      removeAudioFromAddingList(item);
+    } else addAudioToAddingList(item);
   };
 
   return (
@@ -37,6 +39,7 @@ const MusicSelectionModal = () => {
             mediaInfo.audioList[7],
           ]}
           onItemPress={toogleAudio}
+          selecteds={selecteds}
         />
       </View>
     </View>

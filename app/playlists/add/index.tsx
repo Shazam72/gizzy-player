@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { Stack, useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Input from "../../../components/_partials/Input";
@@ -14,16 +14,25 @@ import BasicModal from "../../../components/_partials/Modal";
 import MusicSelectionModal from "../../../components/playlists/add/music-selection-modal";
 import MusicListItem from "../../../components/_partials/MusicListItem";
 import { PlaylistContext } from "../../../contexts/playlist";
+import { getAsset } from "../../../utils/media";
+import { Asset } from "expo-media-library";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("screen");
 const IMG_CONTAINER_SIZE = SCREEN_WIDTH * 0.6;
 
-
-
 const Add = () => {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  const {addingList} = useContext(PlaylistContext)
+  const { addingList } = useContext(PlaylistContext);
+
+  const renderItem = ({ item, index }: { item: Asset; index: number }) => {
+    return (
+      <View>
+        <Text>{item.filename}</Text>
+      </View>
+    );
+  };
+
   // const [list, setList] =useState<string[]>([]);
   return (
     <>
@@ -60,15 +69,9 @@ const Add = () => {
         </TouchableOpacity>
 
         <FlatList
-          keyExtractor={(item, index) => item}
+          keyExtractor={(item, index) => item.id}
           data={addingList}
-          renderItem={({ item, index }) => {
-            return (
-              <View>
-                <Text>{item}</Text>
-              </View>
-            );
-          }}
+          renderItem={renderItem}
         />
       </View>
       <BasicModal

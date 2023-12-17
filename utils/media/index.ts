@@ -47,4 +47,11 @@ export const checkPermissions: () => Promise<boolean> = async () => {
     }
 };
 
+export const getAsset:
+    (assetId: string) => Promise<MediaLibrary.Asset | null>
+    = async (assetId) => {
+        let asset = null
+        asset = await MediaLibrary.getAssetInfoAsync(assetId)
+        return asset
+    }
 

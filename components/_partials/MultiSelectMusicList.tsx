@@ -12,6 +12,7 @@ export interface MultiSelectMusicListProps {
   showItemOption?: boolean;
   filterOrder?: "asc" | "desc";
   filterKey?: FilterKeyOptions;
+  selecteds?: string[];
 }
 
 export default function MultiSelectMusicList({
@@ -20,6 +21,7 @@ export default function MultiSelectMusicList({
   onItemPress,
   filterKey = "filename",
   filterOrder = "asc",
+  selecteds,
 }: MultiSelectMusicListProps) {
   const filteredList = useMemo(() => {
     return orderFilter(list, filterKey, filterOrder);
@@ -31,17 +33,19 @@ export default function MultiSelectMusicList({
   );
 
   const renderItem = useCallback(
-    ({ item, index }) => {
+    ({ item, index }: { item: Asset; index: number }) => {
+      const selected = selecteds.findIndex((v) => v == item.id);
       return (
         <MultiSelectMusicListItem
           onItemPress={onListItemPress}
           item={item}
           index={index}
           showItemOption
+          selected={selected == -1 ? false : true}
         />
       );
     },
-    [onListItemPress, showItemOption]
+    [onListItemPress, showItemOption, selecteds]
   );
 
   return (
