@@ -12,15 +12,18 @@ export const PlaylistContext = createContext<IPlaylistContext>(null);
 export const PlaylistContextProvider = ({ children }) => {
   const [addingList, setAddingList] = useState<Asset[]>([]);
   const addAudioToAddingList = (item: Asset) => {
-    setAddingList((v) => [...v, item]);
-  };
-  const removeAudioFromAddingList = (item: Asset) => {
-    setAddingList((v) => v.filter((e) => e.id != item.id));
-  };
+    setAddingList((v) => {
 
+        const isInList = v.findIndex(i=> i.id == item.id)
+        if (isInList == -1)
+            return [...v, item]
+        else
+            return v.filter((e) => e.id != item.id)
+    })
+  };
   return (
     <PlaylistContext.Provider
-      value={{ addAudioToAddingList, removeAudioFromAddingList, addingList }}
+      value={{ addAudioToAddingList, addingList }}
     >
       {children}
     </PlaylistContext.Provider>

@@ -25,13 +25,13 @@ const Add = () => {
   const router = useRouter();
   const { addingList } = useContext(PlaylistContext);
 
-  const renderItem = ({ item, index }: { item: Asset; index: number }) => {
+  const renderItem = useCallback(({ item, index }: { item: Asset; index: number }) => {
     return (
       <View>
         <Text>{item.filename}</Text>
       </View>
     );
-  };
+  },[]);
 
   // const [list, setList] =useState<string[]>([]);
   return (

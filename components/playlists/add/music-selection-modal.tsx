@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Dimensions, StatusBar } from "react-native";
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import MediaContext, { useMediaContext } from "../../../contexts/media";
 import MultiSelectMusicList from "../../_partials/MultiSelectMusicList";
 import { Asset } from "expo-media-library";
@@ -11,37 +11,23 @@ const MusicSelectionModal = () => {
   const { mediaInfo } = useMediaContext();
   const { addingList, addAudioToAddingList, removeAudioFromAddingList } =
     useContext(PlaylistContext);
-  const selecteds = addingList.map((v) => v.id);
+  const selecteds = useMemo(() => addingList.map((v) => v.id), [addingList]);
 
-  const toogleAudio = (item: Asset, index: number) => {
-    const isInList = addingList.find((v) => v.id == item.id);
-
-    if (isInList) {
-      removeAudioFromAddingList(item);
-    } else addAudioToAddingList(item);
-  };
+  const toogleAudio = useCallback(
+    (item: Asset, index: number) => addAudioToAddingList(item),
+    []
+  );
 
   return (
     <View>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Select music(s)</Text>
       </View>
-      <View style={{ marginVertical: 20 }}>
-        <MultiSelectMusicList
-          list={[
-            mediaInfo.audioList[0],
-            mediaInfo.audioList[1],
-            mediaInfo.audioList[2],
-            mediaInfo.audioList[3],
-            mediaInfo.audioList[4],
-            mediaInfo.audioList[5],
-            mediaInfo.audioList[6],
-            mediaInfo.audioList[7],
-          ]}
-          onItemPress={toogleAudio}
-          selecteds={selecteds}
-        />
-      </View>
+      <MultiSelectMusicList
+        list={mediaInfo.audioList}
+        onItemPress={toogleAudio}
+        selecteds={selecteds}
+      />
     </View>
   );
 };

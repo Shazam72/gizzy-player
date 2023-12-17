@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import React from "react";
 import color from "../../configs/color";
@@ -46,6 +47,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     zIndex: 1000,
+    maxWidth: SCREEN_WIDTH,
+    maxHeight: SCREEN_HEIGHT - SCREEN_WIDTH,
   },
   modalBack: {
     position: "absolute",

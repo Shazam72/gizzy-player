@@ -22,7 +22,6 @@ interface MultiSelectMusicListItemProps {
   item: Asset;
   onItemPress: (item: Asset, index: number) => void;
   index: number;
-  showItemOption?: boolean;
   selected?:boolean
 }
 
@@ -31,7 +30,6 @@ const MultiSelectMusicListItem = memo(
     item,
     onItemPress,
     index,
-    showItemOption,
     selected= false
   }: MultiSelectMusicListItemProps) => {
     const [checked, setChecked] = useState(selected);

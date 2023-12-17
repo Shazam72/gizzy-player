@@ -34,14 +34,13 @@ export default function MultiSelectMusicList({
 
   const renderItem = useCallback(
     ({ item, index }: { item: Asset; index: number }) => {
-      const selected = selecteds.findIndex((v) => v == item.id);
+      const selected = Boolean(selecteds.find((v) => v == item.id));
       return (
         <MultiSelectMusicListItem
           onItemPress={onListItemPress}
           item={item}
           index={index}
-          showItemOption
-          selected={selected == -1 ? false : true}
+          selected={selected}
         />
       );
     },
@@ -61,10 +60,7 @@ export default function MultiSelectMusicList({
 }
 
 const styles = StyleSheet.create({
-  listContainer: {
-    paddingLeft: 10,
-    paddingVertical: 10,
-  },
+  listContainer: {},
   activeItem: {
     backgroundColor: "#d406d479",
   },
