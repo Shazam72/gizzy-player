@@ -8,6 +8,7 @@ import PlayerContext from "../../contexts/player";
 import OptionModal from "./OptionModal";
 import { AVPlaybackStatus, AVPlaybackStatusSuccess, Audio } from "expo-av";
 import { Asset } from "expo-media-library";
+import MusicList from "../_partials/MusicList";
 
 const keyExtractor = (item) => item.id;
 
@@ -99,29 +100,15 @@ export default function AudioList({ list }) {
     [getAudioIndexByURI]
   );
 
-  const renderItem = useCallback(
-    ({ item, index }) => {
-      return (
-        <AudioListItem
-          onAudioListItemPress={onAudioListItemPress}
-          onOptionPress={onAudioOptionPress}
-          item={item}
-          index={index}
-        />
-      );
-    },
-    [onAudioListItemPress]
-  );
-
   return (
     <>
       <Tabs.Screen options={{ headerShown: true }} />
       <View>
-        <FlatList
-          style={styles.listContainer}
-          data={list}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
+        <MusicList
+          list={list}
+          onItemOptionsPress={onAudioOptionPress}
+          onItemPress={onAudioListItemPress}
+          showItemOption
         />
       </View>
       <OptionModal

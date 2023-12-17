@@ -22,6 +22,7 @@ import { useNavigation } from "expo-router";
 import { playAudio } from "../../utils/audio-control";
 import { Asset } from "expo-media-library";
 import { ModalFunctionsType } from "./AudioList";
+import BasicModal from "../_partials/Modal";
 
 const OptionItem = ({
   library: LibraryName,
@@ -64,74 +65,56 @@ export default function OptionModal({
     modalOptionsFunctions.addToPlaylist(item, index);
 
   return (
-    <Modal
+    <BasicModal
+      onClose={onClose}
       transparent
       animationType="slide"
       // useNativeDriver={true}
       visible={visible}
     >
-      <View style={styles.container}>
-        <View style={styles.modalHead}>
-          <View style={styles.iconContainer}>
-            <SimpleLineIcons
-              color={color.primary}
-              size={20}
-              name="music-tone"
-            />
-          </View>
-          <View style={styles.audioInfo}>
-            <Text style={styles.audioTitle}>{item?.filename}</Text>
-            <Text style={styles.audioSubTitle}>
-              {`Duration:  ${convertToNormalTimestamp(item?.duration)}`}
-            </Text>
-          </View>
+      <View style={styles.modalHead}>
+        <View style={styles.iconContainer}>
+          <SimpleLineIcons color={color.primary} size={20} name="music-tone" />
         </View>
-
-        <View style={styles.optionsContainer}>
-          <OptionItem
-            library={FontAwesome5}
-            size={22}
-            name="play"
-            color="black"
-            optionName="Écouter"
-            onPress={onListeningPress}
-          />
-          <OptionItem
-            library={MaterialIcons}
-            size={24}
-            name="favorite-outline"
-            color="black"
-            optionName="Favoris"
-            onPress={onFavouritePress}
-          />
-          <OptionItem
-            library={FontAwesome5}
-            size={24}
-            name="plus-square"
-            color="black"
-            optionName="Ajouter à une playlist"
-            onPress={onAddPlaylistPress}
-          />
+        <View style={styles.audioInfo}>
+          <Text style={styles.audioTitle}>{item?.filename}</Text>
+          <Text style={styles.audioSubTitle}>
+            {`Duration:  ${convertToNormalTimestamp(item?.duration)}`}
+          </Text>
         </View>
       </View>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalBack} />
-      </TouchableWithoutFeedback>
-    </Modal>
+
+      <View style={styles.optionsContainer}>
+        <OptionItem
+          library={FontAwesome5}
+          size={22}
+          name="play"
+          color="black"
+          optionName="Écouter"
+          onPress={onListeningPress}
+        />
+        <OptionItem
+          library={MaterialIcons}
+          size={24}
+          name="favorite-outline"
+          color="black"
+          optionName="Favoris"
+          onPress={onFavouritePress}
+        />
+        <OptionItem
+          library={FontAwesome5}
+          size={24}
+          name="plus-square"
+          color="black"
+          optionName="Ajouter à une playlist"
+          onPress={onAddPlaylistPress}
+        />
+      </View>
+    </BasicModal>
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: color.white,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    zIndex: 1000,
-  },
+
   modalHead: {
     width: "100%",
     flexDirection: "row",
@@ -141,15 +124,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingVertical: 5,
     color: color.base,
-  },
-  modalBack: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-    backgroundColor: "#03030348",
-    zIndex: 999,
   },
   audioInfo: {
     flex: 1,

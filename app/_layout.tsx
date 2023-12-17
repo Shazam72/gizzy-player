@@ -58,6 +58,7 @@ export default function AppLayout() {
                   color={focused ? colors.primary : "black"}
                 />
               ),
+              headerShown: false,
             }}
           />
         </Tabs>
