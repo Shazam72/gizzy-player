@@ -9,7 +9,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
 const MusicSelectionModal = () => {
   const { mediaInfo } = useMediaContext();
-  const { addingList, addAudioToAddingList, removeAudioFromAddingList } =
+  const { addingList, addAudioToAddingList } =
     useContext(PlaylistContext);
   const selecteds = useMemo(() => addingList.map((v) => v.id), [addingList]);
 

@@ -23,3 +23,16 @@ export const getPlaylists: () => Promise<IPlaylist[]> = async () => {
     return playLists
 
 }
+
+export const createPlaylist: (playlist: IPlaylist) => Promise<boolean> = async (playlist) => {
+
+    try {
+        const lists = await getPlaylists()
+        await AsyncStorage.setItem('plalists', JSON.stringify(lists))
+    } catch (error) {
+        console.log('Error while saving playlist: ', error);
+        return false
+    }
+
+
+}

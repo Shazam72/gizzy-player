@@ -6,7 +6,13 @@ import {
   Dimensions,
   Modal,
 } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
+} from "react";
 import {
   SimpleLineIcons,
   FontAwesome5,
@@ -18,6 +24,7 @@ import { IPlaylist, getPlaylists } from "../../utils/media/playlist";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import BasicModal from "../../components/_partials/Modal";
 import { Link, Stack } from "expo-router";
+import { PlaylistContext } from "../../contexts/playlist";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("screen");
 const PLAYLIST_ITEM_WIDTH =
@@ -76,8 +83,9 @@ const PlaylistAddModal = () => {
 
 export default function Playlists() {
   const [searchValue, setSearchValue] = useState("");
-  const [playlists, setPlaylists] = useState<IPlaylist[]>([]);
+
   const [modalVisible, setModalVisible] = useState(false);
+  const { playlists } = useContext(PlaylistContext);
 
   const addModal = () => setModalVisible(true);
   const onModalClose = () => setModalVisible(false);
@@ -104,12 +112,6 @@ export default function Playlists() {
         </Text>
       </View>
     );
-  }, []);
-
-  useEffect(() => {
-    getPlaylists().then((lists) => {
-      setPlaylists(lists);
-    });
   }, []);
 
   return (
