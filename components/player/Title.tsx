@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { memo } from "react";
 
-export default Title = memo(({ children }) => {
+type TitleProps ={
+  children: React.ReactNode
+}
+
+export default memo(({ children }: TitleProps) => {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.title}>

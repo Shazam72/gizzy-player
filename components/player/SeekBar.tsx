@@ -11,7 +11,7 @@ import PlayerContext from "../../contexts/player";
 import Slider from "@react-native-community/slider";
 import color from "../../configs/color";
 import { useMediaContext } from "../../contexts/media";
-import { playAnotherAudio } from "../../utils/audio-control";
+import {  playAudio } from "../../utils/audio-control";
 import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
 
 const getSeekBarValue = (positionMillis, durationMillis) => {
@@ -61,7 +61,7 @@ export default function SeekBar({ showDuration = true }) {
         if (newCurrentAudioIndex >= mediaInfo.totalCount)
           newCurrentAudioIndex = 0;
         const newCurrentAudio = mediaInfo.audioList[newCurrentAudioIndex];
-        const status = await playAnotherAudio(
+        const status = await playAudio(
           playerInfo.playerObj,
           newCurrentAudio.uri
         );

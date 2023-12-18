@@ -1,7 +1,6 @@
 import { useMemo, useContext } from "react";
 import {
   pauseAudio,
-  playAnotherAudio,
   resumeAudio,
   playAudio,
 } from "../utils/audio-control";
@@ -29,7 +28,7 @@ export const usePlayerControls = () => {
     let newCurrentAudioIndex = currentAudioIndex + 1;
     if (newCurrentAudioIndex >= totalCount) newCurrentAudioIndex = 0;
     let newCurrentAudio = audioList[newCurrentAudioIndex];
-    let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
+    let status = await playAudio(playerObj, newCurrentAudio.uri);
     updatePlayerInfo({
       playerStatus: status,
       currentAudioIndex: newCurrentAudioIndex,
@@ -41,7 +40,7 @@ export const usePlayerControls = () => {
     let newCurrentAudioIndex = currentAudioIndex - 1;
     if (newCurrentAudioIndex < 0) newCurrentAudioIndex = totalCount - 1;
     let newCurrentAudio = audioList[newCurrentAudioIndex];
-    let status = await playAnotherAudio(playerObj, newCurrentAudio.uri);
+    let status = await playAudio(playerObj, newCurrentAudio.uri);
     updatePlayerInfo({
       playerStatus: status,
       currentAudioIndex: newCurrentAudioIndex,

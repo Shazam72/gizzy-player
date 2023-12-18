@@ -4,13 +4,6 @@ import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { MediaContextProvider } from "../contexts/media";
 import { PlayerContextProvider } from "../contexts/player";
 
-const options = {
-  tabBarLabelStyle: {
-    fontWeight: "bold",
-    fontSize: 13,
-  },
-};
-
 export default function AppLayout() {
   return (
     <MediaContextProvider>
@@ -24,17 +17,17 @@ export default function AppLayout() {
               color: colors.black,
             },
             tabBarActiveTintColor: colors.primary,
+            tabBarShowLabel: false,
           }}
         >
           <Tabs.Screen
             name="index"
             options={{
               title: "Bibliothèque",
-              ...options,
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="my-library-music"
-                  size={20}
+                  size={25}
                   color={focused ? colors.primary : "black"}
                 />
               ),
@@ -45,11 +38,10 @@ export default function AppLayout() {
             options={{
               title: "Écouter",
               headerShown: false,
-              ...options,
               tabBarIcon: ({ focused }) => (
                 <Ionicons
                   name="md-headset-sharp"
-                  size={20}
+                  size={25}
                   color={focused ? colors.primary : "black"}
                 />
               ),
@@ -59,14 +51,14 @@ export default function AppLayout() {
             name="playlists"
             options={{
               title: "Playlists",
-              ...options,
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="my-library-music"
-                  size={20}
+                  size={25}
                   color={focused ? colors.primary : "black"}
                 />
               ),
+              headerShown: false,
             }}
           />
         </Tabs>

@@ -1,12 +1,13 @@
 export const playAudio = async (playerObj, uri) => {
+  const currentStatus = await playerObj.getStatusAsync();
+  if (currentStatus.isLoaded) {
+    await playerObj.stopAsync();
+    await playerObj.unloadAsync();
+  }
+
   return await playerObj.loadAsync({ uri }, { shouldPlay: true });
 };
 
-export const playAnotherAudio = async (playerObj, uri) => {
-  await playerObj.stopAsync();
-  await playerObj.unloadAsync();
-  return await playAudio(playerObj, uri);
-};
 export const pauseAudio = async (playerObj) => {
   return await playerObj.setStatusAsync({ shouldPlay: false });
 };

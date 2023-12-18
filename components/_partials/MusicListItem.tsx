@@ -1,34 +1,43 @@
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
-import { memo } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from "react-native";
+import { memo, useState } from "react";
 import color from "../../configs/color";
 import { Entypo, SimpleLineIcons } from "@expo/vector-icons";
 import Animated, {
+  interpolate,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 import convertToNormalTimestamp from "../../utils/convertToNormalTimestamp";
+import { Asset } from "expo-media-library";
+const ITEM_HEIGHT = 55;
 
-const AudioListItem = memo(
-  ({ item, onOptionPress, viewableItems, index, onAudioListItemPress }) => {
-    const rStyle = useAnimatedStyle(() => {
-      const isVisible = Boolean(
-        viewableItems.value.find((v) => v.item.id === item.id)
-      );
+interface MusicListItemProps {
+  item: Asset;
+  onItemPress: (item: Asset, index: number) => void;
+  index: number;
+  onOptionPress: (item: Asset, index: number) => void;
+  showItemOption?: boolean;
+}
 
-      return {
-        opacity: withTiming(isVisible ? 1 : 0),
-        transform: [
-          {
-            scale: withTiming(isVisible ? 1 : 0.6),
-          },
-        ],
-      };
-    }, [viewableItems, item]);
+const MusicListItem = memo(
+  ({
+    item,
+    onItemPress,
+    index,
+    onOptionPress,
+    showItemOption,
+  }: MusicListItemProps) => {
+    const onAudioItemPress = () => onItemPress(item, index);
     const onAudioOptionPress = () => onOptionPress(item, index);
-    const onAudioItemPress = () => onAudioListItemPress(item, index);
 
     return (
-      <Animated.View style={[styles.wrapper, rStyle]}>
+      <View style={[styles.wrapper]}>
         <TouchableWithoutFeedback onPress={onAudioItemPress}>
           <View style={styles.audioItemContainer}>
             <View style={styles.iconContainer}>
@@ -42,16 +51,21 @@ const AudioListItem = memo(
               <Text style={[styles.audioItemTitle]} numberOfLines={1}>
                 {item.filename}
               </Text>
-              <Text style={[styles.audioItemSubTitle]}>{convertToNormalTimestamp(item.duration)}</Text>
+              <Text style={[styles.audioItemSubTitle]}>
+                {convertToNormalTimestamp(item.duration)}
+              </Text>
             </View>
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={onAudioOptionPress}>
-          <View style={styles.audioItemDots}>
-            <Entypo name="dots-three-vertical" color="#959595" size={24} />
-          </View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
+        {showItemOption && (
+          <TouchableOpacity
+            style={styles.audioItemDots}
+            onPress={onAudioOptionPress}
+          >
+            <Entypo name="dots-three-vertical" color="#959595" size={16} />
+          </TouchableOpacity>
+        )}
+      </View>
     );
   }
 );
@@ -59,6 +73,8 @@ const AudioListItem = memo(
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
+    height: ITEM_HEIGHT,
+    marginBottom: 10,
   },
   audioItemContainer: {
     flexDirection: "row",
@@ -78,9 +94,11 @@ const styles = StyleSheet.create({
     color: "#a5a5a5",
   },
   audioItemDots: {
-    // borderWidth: 2,
+    width: 35,
+    height: 35,
     justifyContent: "center",
-    paddingRight: 10,
+    alignItems: "center",
+    borderRadius: 35 / 2,
   },
   iconContainer: {
     width: 50,
@@ -93,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AudioListItem;
+export default MusicListItem;
